@@ -8,5 +8,9 @@
 # --------------------------------------------
 from TaskExplain import TaskExplain
 
+
+gl_time = 0
+
+
 if __name__ == '__main__':
     TaskExplain.str_task_bap_explain()
