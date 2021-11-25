@@ -27,7 +27,7 @@ class Buffer:
 
         self.request_in_buffer = None   # 当前在缓冲区中的请求
         self.request_push_time = None   # 上一个/当前 请求进入缓冲区的时间
-        self.num_been_request = 0       # 本缓冲区中存留过得请求总数
+        self.num_been_request = 0       # 本缓冲区中存留过的请求总数
         self.serve_time = 0             # 本缓冲区的服务时间（各请求在缓冲区的停留时间总和）
         self.timeline = timeline        # 时间线
 
