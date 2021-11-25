@@ -29,7 +29,7 @@ class TimeLine:
         print("[INFO] Init time line")
 
         # 模拟时间
-        self.__time_now = 0.0
+        self.__time_now = 0
         self.__time_unit = time_unit  # __time_unit 时间的步长（每单位时间是多久）默认为 1
         TimeLine.__init_flag = True
 
