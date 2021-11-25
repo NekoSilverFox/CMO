@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2021/11/23 16:59
 # @Author  : Meng Jianing
-# @FileName: Device.py
+# @FileName: device.py
 # @Software: PyCharm
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox

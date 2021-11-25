@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2021/11/23 16:57
 # @Author  : Meng Jianing
-# @FileName: Buffer.py
+# @FileName: buffer.py
 # @Software: PyCharm
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
 from enum import Enum
-from Main import gl_time
+from main import gl_time
 
 
 class EventTypeBuffer(Enum):
