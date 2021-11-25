@@ -6,104 +6,71 @@
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
-from enum import Enum
 
 
+class Buffer:
+    num_buffer = 0  # 当前 CMO 中的缓冲区总数
 
-class EventTypeBuffer(Enum):
-    """在缓冲区的事件类型"""
-    # 接受请求
-    ARRIVE_REQUEST = 0
+    def __init__(self, timeline, priority=None):
+        """ 初始化缓冲区
 
-    # 请求结束
-    EXIT_REQUEST = 1
-
-    # 拒绝请求
-    REFUSE_REQUEST = 2
-
-
-class Buffer(EventTypeBuffer):
-    # 当前缓冲区（Buffer）的数量
-    __num_buffer = 0
-
-    # Buffer 事件总量
-    __event_num = 0
-
-    # Buffer 共同日志。数据类型为List列表，每个时间为一个元组
-    __all_buffer_log = []
-
-    def __init__(self):
-        """ 初始化并配置变量
+        :param timeline: 时间线
+        :param priority: 本缓冲区的优先级，如果未指定则与此缓冲区的 ID 相同
         """
-        # 每创建一个新的 Buffer 对象的时候，将数量加一
-        self.__num_buffer += 1
+        Buffer.num_buffer += 1
+        self.id = Buffer.num_buffer     # 缓冲区 ID
 
-        # 当前 Buffer 的 ID (ID 从 1 开始计算)
-        self.id = self.__num_buffer
-
-        # Buffer 的优先级
-        self.priority = self.id
-
-        # Buffer 目前是否被占用
-        self.isOccupy = False
-
-        # 当前位于 Buffer 中的请求
-        self.request_in_buffer = None
-
-        # 下一个事件发生时间
-        # self.next_event_happen_time = None
-
-        # 下一个事件发生 ID
-        # self.next_event_happen_id = None
-
-        # Buffer 日志。数据类型为List列表，每个时间为一个元组
-        self.log = []
-
-    @classmethod
-    def get_num_buffer(cls):
-        """获取当前 Buffer 的数量
-        :return: Buffer 的数量
-        """
-        return cls.__num_buffer
-
-    def insert_request_to_buffer(self, request):
-        # 如果当前 Buffer 是空闲的就插入
-        if self.isOccupy is False:
-            self.isOccupy = True
-            self.request_in_buffer = request
-            event = self.__get_event(gl_time, EventTypeBuffer.ARRIVE_REQUEST, self.id, request)
-            self.log.append(event)
-            __allbu
+        if priority is None:            # 缓冲区优先级
+            self.priority = self.id
         else:
+            self.priority = priority
+
+        self.request_in_buffer = None   # 当前在缓冲区中的请求
+        self.request_push_time = None   # 上一个/当前 请求进入缓冲区的时间
+        self.num_been_request = 0       # 本缓冲区中存留过得请求总数
+        self.serve_time = 0             # 本缓冲区的服务时间（各请求在缓冲区的停留时间总和）
+        self.timeline = timeline        # 时间线
+
+    def __str__(self):
+        """ 返回说明当前缓冲区(Buffer)的字符串
+
+        :return: 说明当前缓冲区(Buffer)的字符串
+        """
+        return format('[Buffer] ID: %s' % self.id, '<15') \
+               + format('Priority: %s' % self.priority, '<15') \
+               + format('Request in buffer: %s' %
+                        (self.request_in_buffer.source.id.__str__() + "-" + self.request_in_buffer.request_id.__str__())
+                        , '<35') \
+               + format('Time push last request: %s' % self.request_push_time) \
+               + format('Number request been: %s' % self.num_been_request, '<35') \
+               + format('Serve time: %s' % self.serve_time, '<25')
+
+    def push_request(self, request):
+        """ 向缓冲区插入一个请求
+        如果请求不为空或者缓冲区中现在无请求，则插入成功，返回 True；否则返回 False
+
+        :param request: 要插入的请求
+        :return: 如果请求不为空或者缓冲区中现在无请求，则插入成功，返回 True；否则返回 False
+        """
+        # 如果请求为空且当前缓冲区中有请求，不得再插入，故返回 False
+        if request is None or self.request_in_buffer is not None:
             return False
 
-    def __get_event(self, happen_time, event_type, buffer_id, request):
-        """ 生成并返回缓冲区（Buffer）事件
-        作为 **单个** 事件使用，比如：
-            - 请求到达
-            - 请求弹出
-            - 请求因或缓冲区满被拒绝
+        self.request_in_buffer = request
+        self.request_push_time = self.timeline.get_time()
+        self.num_been_request += 1
+        return True
 
-        单个事件包含：
-            - 事件发生时间
-            - 事件类型
-            - 缓冲区 ID
-            - 请求源 ID
-            - 请求 ID
+    def pop_request(self):
+        # 如果当前缓冲区中无请求，返回 None
+        if self.request_in_buffer is None:
+            return None
 
-        :param happen_time: 事件发生事件
-        :param event_type: 事件类型
-        :param buffer_id: Buffer ID
-        :param request: 请求 ID
-        :return 单个事件的字典
-        """
-        self.__event_num += 1
+        # 如果缓冲区中有请求，先将服务时间进行累加
+        self.serve_time += (self.timeline.get_time - self.request_push_time)
 
-        buffer_event = {
-            "Time": happen_time,
-            "Event ID": self.__event_num,
-            "Event type": event_type,
-            "Buffer ID": buffer_id,
-            "Request": request,
-        }
-        return buffer_event
+        # 再将当前缓冲区置空，并返回缓冲区中的请求
+        request = self.request_in_buffer
+        self.request_in_buffer = None
+        return request
+

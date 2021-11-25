@@ -12,15 +12,20 @@ from request import Request
 class Source:
     num_source = 0  # 记录创建了的源的总数
 
-    def __init__(self, timeline, priority, interval):
+    def __init__(self, timeline, interval, priority=None):
         """ 初始化源
 
-        :param priority: 本源的优先级
         :param interval: 生成请求之间的间隔
+        :param priority: 本源的优先级，如果未指定则与此源的 ID 相同
         """
         Source.num_source += 1
         self.id = Source.num_source     # 本源的ID
-        self.priority = priority        # 本源的优先级
+
+        if priority is None:
+            self.priority = self.id     # 本源的优先级
+        else:
+            self.priority = priority    # 本源的优先级
+
         self.interval = interval        # 生成请求之间的间隔为几个时间单位
         self.timeline = timeline        # 时间线
         self.num_request = 0            # 本源生成的请求数量
