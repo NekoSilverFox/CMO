@@ -15,7 +15,7 @@ class Request:
         """初始化一个请求
 
         :param source: 生成这个请求的源
-        :param request_id: 分配给这个请求的 ID
+        :param request_id: 分配给这个请求的 ID（从 1 开始编号）
         """
         self.source = source
         self.id = request_id
@@ -23,6 +23,10 @@ class Request:
         self.num_request = Request.__num_request
 
     def __str__(self):
+        """ 返回说明当前请求(Request)的字符串
+
+        :return: 说明当前请求(Request)的字符串
+        """
         return format('[Request] Number in CMO: %s' % self.__num_request, '<35') \
-               + format('Source: %s' % self.source, '<20')\
+               + format('Source: %s' % self.source.id, '<20')\
                + format('Request ID in source: %s' % self.id, '<30')
