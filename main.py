@@ -6,9 +6,20 @@
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
-from model.taskExplain import TaskExplain
-
+from model.event import Event
+from model.timeLine import TimeLine
 
 if __name__ == '__main__':
-    TaskExplain.str_task_bap_explain()
+    tmp = Event(1, Event.REQUEST_CREATE, 2, 3, 4, 5, 6)
+    print(tmp)
+
+    tmp = Event(1, Event.REQUEST_CREATE, 2, None, 4, 5, 6)
+    print(tmp)
+
+    tl = TimeLine()
+    TimeLine()
+    TimeLine()
+
+    i = 1
+    print(i.__str__())
 

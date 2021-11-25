@@ -7,7 +7,7 @@
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
 from enum import Enum
-from main import gl_time
+
 
 
 class EventTypeBuffer(Enum):
