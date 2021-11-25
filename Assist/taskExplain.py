@@ -7,12 +7,8 @@
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
 
-"""
-    输出任务的说明
-"""
-
-
 class TaskExplain:
+    """输出任务的说明"""
 
     @staticmethod
     def str_task_bap_explain():
