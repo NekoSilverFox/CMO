@@ -9,6 +9,8 @@
 
 
 class Buffer:
+    """缓冲区"""
+
     num_buffer = 0  # 当前 CMO 中的缓冲区总数
 
     def __init__(self, timeline, priority=None):
@@ -41,7 +43,7 @@ class Buffer:
                + format('Request in buffer: %s' %
                         (self.request_in_buffer.source.id.__str__() + "-" + self.request_in_buffer.request_id.__str__())
                         , '<35') \
-               + format('Time push last request: %s' % self.request_push_time) \
+               + format('Time push last/this request: %s' % self.request_push_time, '<45') \
                + format('Number request been: %s' % self.num_been_request, '<35') \
                + format('Serve time: %s' % self.serve_time, '<25')
 
@@ -62,6 +64,10 @@ class Buffer:
         return True
 
     def pop_request(self):
+        """ 如果当前缓冲区中有请求，则弹出当前请求（返回Request），否则返回 None
+
+        :return: Request请求 或 None
+        """
         # 如果当前缓冲区中无请求，返回 None
         if self.request_in_buffer is None:
             return None

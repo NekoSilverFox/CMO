@@ -10,6 +10,7 @@ from model.event import Event
 from model.timeLine import TimeLine
 from model.request import Request
 
+
 if __name__ == '__main__':
     # tmp = Event(1, Event.REQUEST_CREATE, 2, 3, 4, 5, 6)
     # print(tmp)
@@ -44,3 +45,5 @@ if __name__ == '__main__':
     print('当前【源】时间线的时间为：' + tl.get_time().__str__())
     print('当前【拷贝】时间线的时间为：' + copy_tl.get_time().__str__())
 
+
+    print('--------------------测试------------------------------')

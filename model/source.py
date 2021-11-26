@@ -47,7 +47,7 @@ class Source:
 
     def create_request(self):
         """生成请求
-        如果当前的时间和本源生成下一个请求的时间（`self`.time_create_next_request` ）一致则生成请求，并返回生成的请求（Request）对象，否则返回 None
+        如果当前的时间和本源生成下一个请求的时间（` self`.time_create_next_request` ）一致则生成请求，并返回生成的请求（Request）对象，否则返回 None
         :return: Request对象 或 None
         """
         # CMO的当前时间和本源生成下一个请求的时间（`self`.time_create_next_request` ）一致，生成请求
