@@ -96,7 +96,7 @@ class Device:
                       request_id_in_source=request.request_id_in_source,
                       buffer_id=None,
                       device_id=self.id)
-        self.timeline.log.append(event)
+        self.timeline.add_event(event)
 
         self.num_been_request += 1
         self.request_in_device = request
@@ -131,7 +131,7 @@ class Device:
                       request_id_in_source=request.request_id_in_source,
                       buffer_id=None,
                       device_id=self.id)
-        self.timeline.log.append(event)
+        self.timeline.add_event(event)
 
         self.serve_time += (self.request_done_time - self.request_push_time)
         self.request_in_device = None

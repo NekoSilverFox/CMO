@@ -75,3 +75,15 @@ class TimeLine:
         :return: None
         """
         self.__time_now += self.__time_unit
+
+    def add_event(self, event):
+        """ 将事件添加至日志
+
+        :param event: 事件
+        :return: 成功则返回 True，失败返回 False
+        """
+        if event is None:
+            return False
+
+        self.log.append(event)
+        return True

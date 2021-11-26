@@ -66,7 +66,7 @@ class Buffer:
                       request_id_in_source=request.request_id_in_source,
                       buffer_id=self.id,
                       device_id=None)
-        self.timeline.log.append(event)
+        self.timeline.add_event(event)
 
         self.request_in_buffer = request
         self.request_push_time = self.timeline.get_time()
@@ -92,7 +92,7 @@ class Buffer:
                       request_id_in_source=request.request_id_in_source,
                       buffer_id=self.id,
                       device_id=None)
-        self.timeline.log.append(event)
+        self.timeline.add_event(event)
 
         # 如果缓冲区中有请求，先将服务时间进行累加
         self.serve_time += (self.timeline.get_time - self.request_push_time)

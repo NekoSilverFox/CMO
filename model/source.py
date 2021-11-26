@@ -68,6 +68,6 @@ class Source:
                       request_id_in_source=request.request_id_in_source,
                       buffer_id=None,
                       device_id=None)
-        self.timeline.log.append(event)
+        self.timeline.add_event(event)
 
         return request
