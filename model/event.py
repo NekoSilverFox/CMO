@@ -38,11 +38,11 @@ class Event:
                  request_id_in_source=None, buffer_id=None, device_id=None):
         """创建一个请求事件
 
-        :param happen_time: 发生时间
-        :param event_type: 事件类型（使用本类名 `Event.REQUEST_????` 获得）
-        :param request_id_in_cmo: 该请求在整个 CMO 系统中的 ID
-        :param source_id: 产生这个请求的源的 ID
-        :param request_id_in_source: 这个请求在产生它的源中的 ID
+        :param happen_time: *发生时间
+        :param event_type: *事件类型（使用本类名 `Event.REQUEST_????` 获得）
+        :param request_id_in_cmo: *该请求在整个 CMO 系统中的 ID
+        :param source_id: *产生这个请求的源的 ID
+        :param request_id_in_source: *这个请求在产生它的源中的 ID
         :param buffer_id: 缓冲区 ID
         :param device_id: 处理机 ID
         """

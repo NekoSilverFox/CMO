@@ -17,16 +17,16 @@ class Request:
         :param source: 生成这个请求的源
         :param request_id: 分配给这个请求的 ID（从 1 开始编号）
         """
-        self.source = source
-        self.id = request_id
+        self.source = source        # 产生这个请求的源
+        self.request_id_in_source = request_id        # 这个请求在它源中的ID
         Request.__num_request += 1
-        self.num_request = Request.__num_request
+        self.request_id_in_cmo = Request.__num_request    # 在整个 CMO 中的唯一 ID
 
     def __str__(self):
         """ 返回说明当前请求(Request)的字符串
 
         :return: 说明当前请求(Request)的字符串
         """
-        return format('[Request] Number in CMO: %s' % self.__num_request, '<35') \
+        return format('[Request] Number in CMO: %s' % self.request_id_in_cmo, '<35') \
                + format('Source: %s' % self.source.id, '<20')\
-               + format('Request ID in source: %s' % self.id, '<30')
+               + format('Request ID in source: %s' % self.request_id_in_source, '<30')

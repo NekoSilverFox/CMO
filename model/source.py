@@ -7,6 +7,7 @@
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
 from request import Request
+from event import Event
 
 
 class Source:
@@ -50,11 +51,23 @@ class Source:
         如果当前的时间和本源生成下一个请求的时间（` self`.time_create_next_request` ）一致则生成请求，并返回生成的请求（Request）对象，否则返回 None
         :return: Request对象 或 None
         """
-        # CMO的当前时间和本源生成下一个请求的时间（`self`.time_create_next_request` ）一致，生成请求
-        if self.time_create_next_request == self.timeline.get_time():
-            self.num_request += 1
-            # 更新生成下一个请求的时间
-            self.time_create_next_request += self.interval * self.timeline.get_time_unit()
-            return Request(self, self.num_request)
-        else:
+        # CMO的当前时间和本源生成下一个请求的时间（`self`.time_create_next_request` ）不一致，返回
+        if self.time_create_next_request != self.timeline.get_time():
             return None
+
+        self.num_request += 1
+        request = Request(self, self.num_request)
+        # 更新生成下一个请求的时间
+        self.time_create_next_request += self.interval * self.timeline.get_time_unit()
+
+        # 将请求插入的动作写入日志
+        event = Event(happen_time=self.timeline.get_time(),
+                      event_type=Event.REQUEST_CREATE,
+                      request_id_in_cmo=request.request_id_in_cmo,
+                      source_id=request.source.id,
+                      request_id_in_source=request.request_id_in_source,
+                      buffer_id=None,
+                      device_id=None)
+        self.timeline.log.append(event)
+
+        return request

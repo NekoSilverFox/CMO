@@ -6,7 +6,7 @@
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
-
+from event import Event
 
 class Buffer:
     """缓冲区"""
@@ -41,7 +41,7 @@ class Buffer:
         return format('[Buffer] ID: %s' % self.id, '<15') \
                + format('Priority: %s' % self.priority, '<15') \
                + format('Request in buffer: %s' %
-                        (self.request_in_buffer.source.id.__str__() + "-" + self.request_in_buffer.request_id.__str__())
+                        (self.request_in_buffer.source.request_id_in_source.__str__() + "-" + self.request_in_buffer.request_id.__str__())
                         , '<35') \
                + format('Time push last/this request: %s' % self.request_push_time, '<45') \
                + format('Number request been: %s' % self.num_been_request, '<35') \
@@ -58,6 +58,16 @@ class Buffer:
         if request is None or self.request_in_buffer is not None:
             return False
 
+        # 将请求插入的动作写入日志
+        event = Event(happen_time=self.timeline.get_time(),
+                      event_type=Event.REQUEST_PUSH_IN_BUFFER,
+                      request_id_in_cmo=request.request_id_in_cmo,
+                      source_id=request.source.id,
+                      request_id_in_source=request.request_id_in_source,
+                      buffer_id=self.id,
+                      device_id=None)
+        self.timeline.log.append(event)
+
         self.request_in_buffer = request
         self.request_push_time = self.timeline.get_time()
         self.num_been_request += 1
@@ -72,11 +82,21 @@ class Buffer:
         if self.request_in_buffer is None:
             return None
 
+        request = self.request_in_buffer
+
+        # 将请求插入的动作写入日志
+        event = Event(happen_time=self.timeline.get_time(),
+                      event_type=Event.REQUEST_POP_FROM_BUFFER,
+                      request_id_in_cmo=request.request_id_in_cmo,
+                      source_id=request.source.id,
+                      request_id_in_source=request.request_id_in_source,
+                      buffer_id=self.id,
+                      device_id=None)
+        self.timeline.log.append(event)
+
         # 如果缓冲区中有请求，先将服务时间进行累加
         self.serve_time += (self.timeline.get_time - self.request_push_time)
 
         # 再将当前缓冲区置空，并返回缓冲区中的请求
-        request = self.request_in_buffer
         self.request_in_buffer = None
         return request
-
