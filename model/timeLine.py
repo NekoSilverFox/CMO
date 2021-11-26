@@ -72,9 +72,10 @@ class TimeLine:
     def time_go(self):
         """ 向后增加一单位的时间，每单位时间在初始化时指定
 
-        :return: None
+        :return: True
         """
         self.__time_now += self.__time_unit
+        return True
 
     def add_event(self, event):
         """ 将事件添加至日志
@@ -86,4 +87,5 @@ class TimeLine:
             return False
 
         self.log.append(event)
+        print(event)
         return True

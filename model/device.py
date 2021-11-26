@@ -6,7 +6,7 @@
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
-from event import Event
+from model.event import Event
 
 
 class Device:

@@ -6,11 +6,13 @@
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
-from request import Request
-from event import Event
+from model.request import Request
+from model.event import Event
 
 
 class Source:
+    """源 —— 用于生成请求"""
+
     num_source = 0  # 记录创建了的源的总数
 
     def __init__(self, timeline, interval, priority=None):
@@ -40,9 +42,9 @@ class Source:
         :return: 说明当前源(Source)的字符串
         """
         return format('[Source] ID: %s' % self.id, '<15') \
-               + format('Priority: %s' % self.priority, '<15') \
-               + format('Interval: %s' % self.interval, '<15') \
-               + format('Number created request: %s' % self.num_request, '<35') \
+               + format('Priority: %s' % self.priority, '<18') \
+               + format('Interval: %s' % self.interval, '<20') \
+               + format('Number created request: %s' % self.num_request, '<33') \
                + format('Next request create time: %s' % self.time_create_next_request, '<35') \
                + format('Enable: %s' % self.enable, '<15')
 
