@@ -114,6 +114,13 @@ def create_device_list(timeline, num_device, min_duration_handle, max_duration_h
 
 
 def push_request_in_buffer_list(request, buffer_list):
+    """ 向缓冲区列表 buffer_list 中选择优先级最大的 Buffer 并将请求插入，返回 True
+    如果所有的缓冲区都被占用，则返回 False
+
+    :param request: 要插入的请求
+    :param buffer_list: 存储多个缓冲区的列表
+    :return: 插入成功返回 True‘失败返回 False
+    """
     for buffer in buffer_list:
         if buffer.request_in_buffer is None:
             buffer.push_request(request)
@@ -123,17 +130,17 @@ def push_request_in_buffer_list(request, buffer_list):
 
 
 def choose_buffer_from_buffer_list(buffer_list):
-    """从 buffer_list 中选择应该弹出请求的那个 Buffer
+    """从 buffer_list 中选择应该弹出请求的那个 Buffer，如果所有 Buffer 中都没有请求则返回 None
     选择规则：
         - 选择优先级最大的请求（请求的优先级就为产生这个请求 源的优先级）
         - 如果优先级相同则选择最后一个进入缓冲区的
 
     :param buffer_list: 存有多个缓冲区（Buffer）对象的列表
-    :return: 缓冲区（Buffer）对象
+    :return: 缓冲区（Buffer）对象 或 None（如果所有缓冲区都为空）
     """
 
-    if (buffer_list is None) or (buffer_list.len() == 0):
-        print('\033[0;37;41m[ERROR]\033[0m Buffer list is empty!')
+    if (buffer_list is None) or (len(buffer_list) == 0) or (Buffer.num_vacant_buffer == Buffer.num_buffer):
+        print('\033[1;37;41m[WARNING]\033[0m Buffer list is empty!')  # TODO 修改或删除
         return None
 
     max_request_priority = -1  # 最大优先级的 Request
@@ -162,3 +169,36 @@ def choose_buffer_from_buffer_list(buffer_list):
     return return_buffer
 
 
+def done_request_in_device_list(device_list):
+    """如果调用此方法时，处理机中的请求在当前时刻完成了处理，则从处理机中弹出请求
+
+    :param device_list: 存有多个处理机（Device）对象的列表
+    :return: 此时刻完成处理的请求数
+    """
+    if (device_list is None) or (len(device_list) == 0):
+        return 0
+
+    num_done_request = 0
+    for device in device_list:
+        request = device.pop_request()
+        if request is not None:
+            num_done_request += 1
+            # print(request.__str__())
+
+    return num_done_request
+
+
+def push_request_in_device_list(request, device_list):
+    if request is None or device_list is None:
+        print('\033[1;37;41m[ERROR]\033[0m Device list or request is empty!')
+        return False
+
+    # 如果所有处理机都被占用，则无法插入
+    if Device.num_vacant_device == 0:
+        print('\033[1;37;41m[WARNING]\033[0m Do not have vacant Device, push failed!')
+        return False
+
+    for device in device_list:
+        if device.request_in_device is None:
+            device.push_request(request)
+            return True

@@ -16,67 +16,6 @@ from model.event import Event
 
 
 if __name__ == '__main__':
-    # tmp = Event(1, Event.REQUEST_CREATE, 2, 3, 4, 5, 6)
-    # print(tmp)
-    #
-    # tmp = Event(1, Event.REQUEST_CREATE, 2, None, 4, 5, 6)
-    # print(tmp)
-    #
-    # i = 1
-    # print(i.__str__())
-    #
-    # r = Request(2, 1)
-    # print(r)
-    # r2 = Request(2, 3)
-    # print(r2)
-
-    # print('开始测试 TimeLine')
-
-    # while True:
-    #     tl = TimeLine(0.1)
-    #     print(tl.get_time())
-    #     tl.time_go()
-
-    # tl = TimeLine()
-    # copy_tl = tl
-    #
-    # print('当前【源】时间线的时间为：' + tl.get_time().__str__())
-    # print('当前【拷贝】时间线的时间为：' + copy_tl.get_time().__str__())
-    # tl.time_go()
-    # tl.time_go()
-    # tl.time_go()
-    # print('--------------------时间增加------------------------------')
-    # print('当前【源】时间线的时间为：' + tl.get_time().__str__())
-    # print('当前【拷贝】时间线的时间为：' + copy_tl.get_time().__str__())
-    #
-    # print('--------------------测试------------------------------')
-
-
-
-    # 确定要创建的各种的数量
-    # source_num = int(input('Source 的数量：'))
-    # buffer_num = int(input('Buffer 的数量：'))
-    # device_num = int(input('Device 的数量：'))
-    #
-    # source_list = []
-    # buffer_list = []
-    # device_list = []
-    #
-    # # 循环创建源
-    # i = 0
-    # while i < source_num:
-    #     i += 1
-    #     source = Source(timeline, 10)
-    #     source_list.append(source)
-    #     print(source)
-    #
-    # while timeline.time_go():
-    #     print('Time now: %s' % timeline.get_time())
-    #     for source in source_list:
-    #         source.create_request()
-    """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
     # 创建时间线
     print('*' * LINE_LENGTH)
     timeline = TimeLine()
@@ -94,8 +33,24 @@ if __name__ == '__main__':
     print('\033[33;1m[INFO]\033[0m Start running')
 
     print('*' * LINE_LENGTH)
-    while timeline.time_go():
-        # 1. 产生请求
+    while True:
+        # 1. 查看处理机中是否有需要处理结束的请求
+        done_request_in_device_list(device_list)
+
+        # 2. 查看缓冲区中时候是否有需要放入处理机的
+        # 直到 处理机全部被占用(没有空闲处理机) 或者 缓冲区全为空
+        # while 循环：     如果处理机没被占满      并且            缓冲区不全为空
+        while (Device.num_vacant_device != 0) and (Buffer.num_vacant_buffer != Buffer.num_buffer):
+            # 选择应该弹出请求的 Buffer
+            buffer_should_pop = choose_buffer_from_buffer_list(buffer_list)
+            request = buffer_should_pop.pop_request()
+
+            # 插入处理机
+            push_request_in_device_list(request, device_list)
+
+        timeline.time_go()
+
+        # 3. 查看是否有需要产生的请求，如果有则插入缓冲
         for source in source_list:
             request = source.create_request()
 
@@ -113,5 +68,3 @@ if __name__ == '__main__':
                                   request_id_in_cmo=request.request_id_in_cmo,
                                   request_id_in_source=request.request_id_in_source)
                     timeline.add_event(event)
-
-

@@ -8,10 +8,12 @@
 # --------------------------------------------
 from model.event import Event
 
+
 class Buffer:
     """缓冲区"""
 
     num_buffer = 0  # 当前 CMO 中的缓冲区总数
+    num_vacant_buffer = 0  # static 当前 CMO 中的空闲的处理机总数
 
     def __init__(self, timeline, priority=None):
         """ 初始化缓冲区
@@ -20,6 +22,7 @@ class Buffer:
         :param priority: 本缓冲区的优先级，如果未指定则与此缓冲区的 ID 相同
         """
         Buffer.num_buffer += 1
+        Buffer.num_vacant_buffer += 1
         self.id = Buffer.num_buffer     # 缓冲区 ID
 
         if priority is None:            # 缓冲区优先级
@@ -74,6 +77,7 @@ class Buffer:
                       device_id=None)
         self.timeline.add_event(event)
 
+        Buffer.num_vacant_buffer -= 1
         self.request_in_buffer = request
         self.request_push_time = self.timeline.get_time()
         self.num_been_request += 1
@@ -100,8 +104,10 @@ class Buffer:
                       device_id=None)
         self.timeline.add_event(event)
 
+        Buffer.num_vacant_buffer += 1
+
         # 如果缓冲区中有请求，先将服务时间进行累加
-        self.serve_time += (self.timeline.get_time - self.request_push_time)
+        self.serve_time += (self.timeline.get_time() - self.request_push_time)
 
         # 再将当前缓冲区置空，并返回缓冲区中的请求
         self.request_in_buffer = None

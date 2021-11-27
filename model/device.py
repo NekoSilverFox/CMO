@@ -13,6 +13,7 @@ class Device:
     """处理机"""
 
     num_device = 0  # static 当前 CMO 中的处理机总数
+    num_vacant_device = 0  # static 当前 CMO 中的空闲的处理机总数
 
     def __init__(self, timeline, max_duration_handle=100, duration_lambda=0.5, priority=None):
         """ 初始化处理机
@@ -24,6 +25,7 @@ class Device:
         """
 
         Device.num_device += 1
+        Device.num_vacant_device += 1
         self.id = Device.num_device     # 处理机 ID
 
         if priority is None:            # 处理机优先级
@@ -105,6 +107,7 @@ class Device:
                       device_id=self.id)
         self.timeline.add_event(event)
 
+        Device.num_vacant_device -= 1
         self.num_been_request += 1
         self.request_in_device = request
         self.request_push_time = self.timeline.get_time()
@@ -119,13 +122,14 @@ class Device:
         :return: 处理完成的请求 或 None
         """
         # TODO 这是一个异常测试，如果当前处理机中有请求且当前时间大于了处理机应处理结束的时间。说明未能成功或未弹出请求
-        if (self.request_in_device is not None) and (self.timeline.get_time() > self.request_done_time):
-            print(
-                f'[ERROR] Request did not pop from this device! Device ID: {self.id:d}, '
-                f'Request ID: {self.request_in_device.request_id:d}')
+        # if (self.request_in_device is not None) and (self.timeline.get_time() > self.request_done_time):
+        #     print(
+        #         f'[WARNING] Request did not pop from this device! Device ID: {self.id:d}, '
+        #         f'Request ID in CMO: {self.request_in_device.request_id_in_cmo:d}')
 
         # 如果当前处理机中无请求，或者未到该弹出的时间返回 None
-        if self.request_in_device is None or self.timeline.get_time() != self.request_done_time:
+        if (self.request_in_device is None) \
+                or (self.timeline.get_time() < self.request_done_time):  # 可能会有1单位的时间的延迟，所以使用了小于号
             return None
 
         request = self.request_in_device
@@ -140,6 +144,7 @@ class Device:
                       device_id=self.id)
         self.timeline.add_event(event)
 
-        self.serve_time += (self.request_done_time - self.request_push_time)
+        Device.num_vacant_device += 1
+        self.serve_time += (self.timeline.get_time() - self.request_push_time)
         self.request_in_device = None
         return request

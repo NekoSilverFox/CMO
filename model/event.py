@@ -27,12 +27,12 @@ class Event:
     """
 
     # 事件类型
-    REQUEST_CREATE = "create"  # 请求被创建
-    REQUEST_PUSH_IN_BUFFER = "join buffer"  # 请求进入缓冲区
-    REQUEST_POP_FROM_BUFFER = "exit buffer"  # 请求离开缓冲区
-    REQUEST_PUSH_IN_DEVICE = "join device"  # 请求进入处理机
-    REQUEST_POP_FROM_DEVICE = "exit device"  # 请求离开处理机
-    REQUEST_CANCEL = "cancel"  # 请求被取消
+    REQUEST_CREATE = '\033[1;32mcreate\033[0m'  # 请求被创建
+    REQUEST_PUSH_IN_BUFFER = '\033[1;33mjoin buffer\033[0m'  # 请求进入缓冲区
+    REQUEST_POP_FROM_BUFFER = '\033[1;33mexit buffer\033[0m'  # 请求离开缓冲区
+    REQUEST_PUSH_IN_DEVICE = '\033[1;34mjoin device\033[0m'  # 请求进入处理机
+    REQUEST_POP_FROM_DEVICE = '\033[1;34mexit device\033[0m'  # 请求离开处理机
+    REQUEST_CANCEL = '\033[1;31mcancel\033[0m'  # 请求被取消
 
     def __init__(self, happen_time=None, event_type=None, request_id_in_cmo=None, source_id=None,
                  request_id_in_source=None, buffer_id=None, device_id=None):
@@ -60,7 +60,7 @@ class Event:
         :return: 事件信息
         """
         return format('\033[33;1m[Event]\033[0m Time: %s' % self.happen_time, "<40") \
-               + format('Type: %s' % self.event_type, "<20") \
+               + format('Type: %s' % self.event_type, "<30") \
                + format('Request ID in CMO: %s' % self.request_id_in_cmo, "<30") \
                + format('Source ID: %s' % self.source_id, "<20") \
                + format('Request ID in source: %s' % self.request_id_in_source, "<33") \
