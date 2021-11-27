@@ -10,7 +10,7 @@
 class Request:
     """请求"""
 
-    __num_request = 0  # 累计生成请求的数量
+    num_request = 0  # 累计生成请求的数量
 
     def __init__(self, source, request_id):
         """初始化一个请求
@@ -20,8 +20,8 @@ class Request:
         """
         self.source = source        # 产生这个请求的源
         self.request_id_in_source = request_id        # 这个请求在它源中的ID
-        Request.__num_request += 1
-        self.request_id_in_cmo = Request.__num_request    # 在整个 CMO 中的唯一 ID
+        Request.num_request += 1
+        self.request_id_in_cmo = Request.num_request    # 在整个 CMO 中的唯一 ID
 
     def __str__(self):
         """ 返回说明当前请求(Request)的字符串

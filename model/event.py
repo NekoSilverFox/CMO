@@ -60,7 +60,7 @@ class Event:
         :return: 事件信息
         """
         return format('\033[33;1m[Event]\033[0m Time: %s' % self.happen_time, "<40") \
-               + format('Type: %s' % self.event_type, "<30") \
+               + format('Type: %s' % self.event_type, "<35") \
                + format('Request ID in CMO: %s' % self.request_id_in_cmo, "<30") \
                + format('Source ID: %s' % self.source_id, "<20") \
                + format('Request ID in source: %s' % self.request_id_in_source, "<33") \

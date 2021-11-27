@@ -10,9 +10,11 @@ from model.timeLine import TimeLine
 from model.source import Source
 from model.buffer import Buffer
 from model.device import Device
+from model.request import Request
 from function.testTool import *
 from assist.format import LINE_LENGTH
 from model.event import Event
+from function.tablePrinter import *
 
 
 if __name__ == '__main__':
@@ -32,6 +34,8 @@ if __name__ == '__main__':
     print('*' * LINE_LENGTH)
     print('\033[33;1m[INFO]\033[0m Start running')
 
+    num_request = 50
+
     print('*' * LINE_LENGTH)
     while True:
         # 1. 查看处理机中是否有需要处理结束的请求
@@ -49,6 +53,10 @@ if __name__ == '__main__':
             push_request_in_device_list(request, device_list)
 
         timeline.time_go()
+
+        # 产生了足够的请求就退出最外层循环
+        if Request.num_request == num_request:
+            break
 
         # 3. 查看是否有需要产生的请求，如果有则插入缓冲
         for source in source_list:
@@ -68,3 +76,5 @@ if __name__ == '__main__':
                                   request_id_in_cmo=request.request_id_in_cmo,
                                   request_id_in_source=request.request_id_in_source)
                     timeline.add_event(event)
+
+    print(source_info_table_cn(source_list))
