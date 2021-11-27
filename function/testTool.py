@@ -113,3 +113,41 @@ def create_device_list(timeline, num_device, min_duration_handle, max_duration_h
     return device_list
 
 
+def choose_buffer_from_buffer_list(buffer_list):
+    """从 buffer_list 中选择应该弹出请求的那个 Buffer
+    选择规则：
+        - 选择优先级最大的请求（请求的优先级就为产生这个请求 源的优先级）
+        - 如果优先级相同则选择最后一个进入缓冲区的
+
+    :param buffer_list: 存有多个缓冲区（Buffer）对象的列表
+    :return: 缓冲区（Buffer）对象
+    """
+
+    if (buffer_list is None) or (buffer_list.len() == 0):
+        print('\033[0;37;41m[ERROR]\033[0m Buffer list is empty!')
+        return None
+
+    max_request_priority = -1  # 最大优先级的 Request
+    last_request_with_max_priority_in_buffer = -1  # 如果请求的优先级【一样】，那么选最后一个进入 Buffer 的
+    return_buffer = None  # 应从选择那个 Buffer 中的请求弹出
+
+    for buffer in buffer_list:
+
+        # 如果当前 Buffer 中有请求，且 Buffer 中请求的优先级【大于或等于】当前记录的
+        if buffer.request_in_buffer is not None \
+                and buffer.request_in_buffer.source.priority >= max_request_priority:
+
+            # 如果 Buffer 中请求的优先级【大于】当前的优先级，直接记录并开启下次循环
+            if buffer.request_in_buffer.source.priority > max_request_priority:
+                max_request_priority = buffer.request_in_buffer.source.priority
+                last_request_with_max_priority_in_buffer = buffer.request_push_time
+                return_buffer = buffer
+                continue
+
+            # 如果 Buffer 中请求的优先级【等于】当前的优先级，就选最后一个进入 Buffer 的
+            if buffer.request_in_buffer.source.priority == max_request_priority \
+                    and buffer.request_push_time > last_request_with_max_priority_in_buffer:
+                last_request_with_max_priority_in_buffer = buffer.request_push_time
+                return_buffer = buffer
+
+    return return_buffer
