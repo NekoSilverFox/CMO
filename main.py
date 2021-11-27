@@ -12,6 +12,7 @@ from model.buffer import Buffer
 from model.device import Device
 from function.testTool import *
 from assist.format import LINE_LENGTH
+from model.event import Event
 
 
 if __name__ == '__main__':
@@ -81,10 +82,36 @@ if __name__ == '__main__':
     timeline = TimeLine()
 
     print('*' * LINE_LENGTH)
-    create_source_list(timeline, 10, 30, 70)
+    source_list = create_source_list(timeline, 3, 30, 70)
 
     print('*' * LINE_LENGTH)
-    create_buffer_list(timeline, 10)
+    buffer_list = create_buffer_list(timeline, 3)
 
     print('*' * LINE_LENGTH)
-    create_device_list(timeline, 10, 60, 100, 0.4, 0.8)
+    device_list = create_device_list(timeline, 3, 60, 100, 0.4, 0.8)
+
+    print('*' * LINE_LENGTH)
+    print('\033[33;1m[INFO]\033[0m Start running')
+
+    print('*' * LINE_LENGTH)
+    while timeline.time_go():
+        # 1. 产生请求
+        for source in source_list:
+            request = source.create_request()
+
+            # 产生了请求，插入缓冲
+            if request is not None:
+                is_success = push_request_in_buffer_list(request, buffer_list)
+
+                # 如果未插入成功，代表缓冲和处理机都处在繁忙状态，该请求被取消。将事件写入到 timeline 的日志
+                if is_success is False:
+                    event = Event(happen_time=timeline.get_time(),
+                                  event_type=Event.REQUEST_CANCEL,
+                                  source_id=request.source.id,
+                                  buffer_id=None,
+                                  device_id=None,
+                                  request_id_in_cmo=request.request_id_in_cmo,
+                                  request_id_in_source=request.request_id_in_source)
+                    timeline.add_event(event)
+
+

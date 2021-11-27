@@ -113,6 +113,15 @@ def create_device_list(timeline, num_device, min_duration_handle, max_duration_h
     return device_list
 
 
+def push_request_in_buffer_list(request, buffer_list):
+    for buffer in buffer_list:
+        if buffer.request_in_buffer is None:
+            buffer.push_request(request)
+            return True
+
+    return False
+
+
 def choose_buffer_from_buffer_list(buffer_list):
     """从 buffer_list 中选择应该弹出请求的那个 Buffer
     选择规则：
@@ -151,3 +160,5 @@ def choose_buffer_from_buffer_list(buffer_list):
                 return_buffer = buffer
 
     return return_buffer
+
+
