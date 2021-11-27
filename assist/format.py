@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2021/11/23 16:59
+# @Time    : 2021/11/27 13:31
 # @Author  : Meng Jianing
-# @FileName: manualTestTool.py
+# @FileName: format.py
 # @Software: PyCharm
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
+LINE_LENGTH = 180

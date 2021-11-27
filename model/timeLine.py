@@ -26,7 +26,7 @@ class TimeLine:
             return
 
         # 如果没有初始化
-        print("[INFO] Init time line")
+        print("\033[33;1m[INFO]\033[0m Init time line")
 
         # 模拟时间
         self.__time_now = 0
@@ -42,7 +42,7 @@ class TimeLine:
             cls.__instance = super().__new__(cls)  # 【重点】为对象分配空间
 
             # 创建对象时，new方法会自动被调用
-            print("[INFO] Create time line")
+            print("\033[33;1m[INFO]\033[0m Create time line")
 
         # 3. 返回对象的引用
         return cls.__instance

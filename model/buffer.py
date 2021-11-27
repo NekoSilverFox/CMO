@@ -38,11 +38,17 @@ class Buffer:
 
         :return: 说明当前缓冲区(Buffer)的字符串
         """
-        return format('[Buffer] ID: %s' % self.id, '<15') \
-               + format('Priority: %s' % self.priority, '<15') \
+        # 如果缓冲中没有请求的话在输出缓冲中请求的时候应该输出 None，而不应该去取值，去取值的话会报错
+        request_source_id = None
+        request_id_in_source = None
+        if self.request_in_buffer is not None:
+            request_source_id = self.request_in_buffer.source.request_id_in_source
+            request_id_in_source = self.request_in_buffer.request_id
+
+        return format('\033[34;1m[Buffer]\033[0m ID: %s' % self.id, '<30') \
+               + format('Priority: %s' % self.priority, '<18') \
                + format('Request in buffer: %s' %
-                        (self.request_in_buffer.source.request_id_in_source.__str__() + "-" + self.request_in_buffer.request_id.__str__())
-                        , '<35') \
+                        (request_source_id.__str__() + "-" + request_id_in_source.__str__()), '<35') \
                + format('Time push last/this request: %s' % self.request_push_time, '<45') \
                + format('Number request been: %s' % self.num_been_request, '<35') \
                + format('Serve time: %s' % self.serve_time, '<25')

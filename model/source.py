@@ -41,7 +41,7 @@ class Source:
 
         :return: 说明当前源(Source)的字符串
         """
-        return format('[Source] ID: %s' % self.id, '<15') \
+        return format('\033[32;1m[Source]\033[0m ID: %s' % self.id, '<30') \
                + format('Priority: %s' % self.priority, '<18') \
                + format('Interval: %s' % self.interval, '<20') \
                + format('Number created request: %s' % self.num_request, '<33') \

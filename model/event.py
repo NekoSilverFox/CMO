@@ -59,10 +59,10 @@ class Event:
 
         :return: 事件信息
         """
-        return format('[Event] Time: %s' % self.happen_time, "<20") \
+        return format('\033[33;1m[Event]\033[0m Time: %s' % self.happen_time, "<40") \
                + format('Type: %s' % self.event_type, "<20") \
                + format('Request ID in CMO: %s' % self.request_id_in_cmo, "<30") \
                + format('Source ID: %s' % self.source_id, "<20") \
-               + format('Request ID in source: %s' % self.request_id_in_source, "<30") \
+               + format('Request ID in source: %s' % self.request_id_in_source, "<33") \
                + format('Buffer ID: %s' % self.buffer_id, "<20") \
                + format('Device ID: %s' % self.device_id, "<15")

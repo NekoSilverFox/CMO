@@ -45,10 +45,17 @@ class Device:
 
         :return: 说明当前处理机(Device)的字符串
         """
-        return format('[Device] ID: %s' % self.id, '<15') \
-               + format('Priority: %s' % self.priority, '<15') \
+        # 如果缓冲中没有请求的话在输出缓冲中请求的时候应该输出 None，而不应该去取值，去取值的话会报错
+        request_source_id = None
+        request_id_in_source = None
+        if self.request_in_device is not None:
+            request_source_id = self.request_in_device.source.request_id_in_source
+            request_id_in_source = self.request_in_device.request_id
+
+        return format('\033[31;1m[Device]\033[0m ID: %s' % self.id, '<30') \
+               + format('Priority: %s' % self.priority, '<18') \
                + format('Request in buffer: %s' %
-                        (self.request_in_device.source.request_id_in_source.__str__() + "-" + self.request_in_device.request_id.__str__())
+                        (request_source_id.__str__() + "-" + request_id_in_source.__str__())
                         , '<35') \
                + format('Time push last/this request: %s' % self.request_push_time, '<45') \
                + format('Time done last/this request: %s' % self.request_done_time, '<45') \
