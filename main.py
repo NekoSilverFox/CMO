@@ -80,6 +80,7 @@ if __name__ == '__main__':
                         timeline.add_event(event)
 
     print(source_info_table_cn(timeline, source_list))
+    print(device_info_table_cn(timeline, device_list))
 
     # 几个源中产生请求在CMO中的ID
     print('*' * LINE_LENGTH)

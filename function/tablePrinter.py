@@ -9,26 +9,47 @@
 
 from colorPrinter.colorPrinter import *
 from function.testTool import *
-DEVICE_TABLE_LINE_LENGTH = 150
+
+SOURCE_TABLE_LINE_LENGTH = 150
+DEVICE_TABLE_LINE_LENGTH = 80
+
 
 
 def source_info_table_cn(timeline, source_list):
+    """ 请在请求全部处理完成后调用！
+        以表格的形式输出各个源生成请求的统计信息：
+        - 源 ID
+        - 该源产生的总请求数
+        - 该源产生的取消率
+        - 该源产生所有请求的停留总时间
+        - 该源产生所有请求在缓冲中等待时间
+        - 该源产生的所有请求服务总时间
+        - 该源产生所有请求的等待时间的方差
+        - 该源产生所有请求的服务时间的方差
+    -
+    :param timeline: 时间线
+    :param source_list: 包含有多个源的列表
+    :return: 带有统计信息的字符串
+    """
+    if timeline is None or source_list is None:
+        return None
+
     # 如果程序正确，那么 请求停留总时间 = 缓冲中等待时间 + 服务时间
-    str_source_table = ('┏' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┓\n'\
+    str_source_table = ('\n┏' + '┅' * SOURCE_TABLE_LINE_LENGTH) + '┓\n' \
                        + '┇' + format(ColorPrinter.get_color_string(
                             string='Source info table',
                             fore_color=ForeColor.GREEN,
-                            show_type=ShowType.HIGHLIGHT), ('^' + (DEVICE_TABLE_LINE_LENGTH + 11).__str__())) + '┇\n'\
-                       + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n'\
-                       + '┇' + format(ColorPrinter.get_color_string('Source', ShowType.HIGHLIGHT), '^21')\
-                       + '┇' + format(ColorPrinter.get_color_string('生成的请求数', ShowType.HIGHLIGHT), '^21')\
-                       + '┇' + format(ColorPrinter.get_color_string('请求的取消率', ShowType.HIGHLIGHT), '^23')\
-                       + '┇' + format(ColorPrinter.get_color_string('请求停留总时间', ShowType.HIGHLIGHT), '^24')\
-                       + '┇' + format(ColorPrinter.get_color_string('缓冲中等待时间', ShowType.HIGHLIGHT), '^24')\
-                       + '┇' + format(ColorPrinter.get_color_string('服务时间', ShowType.HIGHLIGHT), '^24')\
-                       + '┇' + format(ColorPrinter.get_color_string('等待时间的方差', ShowType.HIGHLIGHT), '^23')\
+                            show_type=ShowType.HIGHLIGHT), ('^' + (SOURCE_TABLE_LINE_LENGTH + 11).__str__())) + '┇\n' \
+                       + ('┣' + '┅' * SOURCE_TABLE_LINE_LENGTH) + '┫\n' \
+                       + '┇' + format(ColorPrinter.get_color_string('Source ID', ShowType.HIGHLIGHT), '^21') \
+                       + '┇' + format(ColorPrinter.get_color_string('生成的请求数', ShowType.HIGHLIGHT), '^21') \
+                       + '┇' + format(ColorPrinter.get_color_string('请求的取消率', ShowType.HIGHLIGHT), '^23') \
+                       + '┇' + format(ColorPrinter.get_color_string('请求停留总时间', ShowType.HIGHLIGHT), '^24') \
+                       + '┇' + format(ColorPrinter.get_color_string('缓冲中等待时间', ShowType.HIGHLIGHT), '^24') \
+                       + '┇' + format(ColorPrinter.get_color_string('服务时间', ShowType.HIGHLIGHT), '^24') \
+                       + '┇' + format(ColorPrinter.get_color_string('等待时间的方差', ShowType.HIGHLIGHT), '^23') \
                        + '┇' + format(ColorPrinter.get_color_string('服务时间的方差', ShowType.HIGHLIGHT), '^23') + '┇\n' \
-                       + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n' \
+                       + ('┣' + '┅' * SOURCE_TABLE_LINE_LENGTH) + '┫\n' \
 
     for source in source_list:
         # 源 ID
@@ -95,14 +116,68 @@ def source_info_table_cn(timeline, source_list):
 
         str_source_table += (
           '┇' + format(ColorPrinter.get_color_string('И' + source_id.__str__(), ShowType.HIGHLIGHT), '^21') \
-        + '┇' + format(ColorPrinter.get_color_string(num_request.__str__()), '^17') \
-        + '┇' + format(ColorPrinter.get_color_string((round((probability_cancel * 100), 5).__str__() + ' %')), '^18') \
-        + '┇' + format(ColorPrinter.get_color_string(all_request_live_time.__str__()), '^18') \
-        + '┇' + format(ColorPrinter.get_color_string(all_request_wait_time_in_buffer.__str__()), '^18') \
-        + '┇' + format(ColorPrinter.get_color_string(all_request_handle_time.__str__()), '^18') \
-        + '┇' + format(ColorPrinter.get_color_string((round(variance_wait_time, 5)).__str__()), '^22') \
-        + '┇' + format(ColorPrinter.get_color_string((round(variance_handle_time, 5)).__str__()), '^21') + '┇\n' \
-        + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n'
+          + '┇' + format(ColorPrinter.get_color_string(num_request.__str__()), '^17') \
+          + '┇' + format(ColorPrinter.get_color_string((round((probability_cancel * 100), 5).__str__() + ' %')), '^18') \
+          + '┇' + format(ColorPrinter.get_color_string(all_request_live_time.__str__()), '^18') \
+          + '┇' + format(ColorPrinter.get_color_string(all_request_wait_time_in_buffer.__str__()), '^18') \
+          + '┇' + format(ColorPrinter.get_color_string(all_request_handle_time.__str__()), '^18') \
+          + '┇' + format(ColorPrinter.get_color_string((round(variance_wait_time, 5)).__str__()), '^22') \
+          + '┇' + format(ColorPrinter.get_color_string((round(variance_handle_time, 5)).__str__()), '^21') + '┇\n' \
+          + ('┣' + '┅' * SOURCE_TABLE_LINE_LENGTH) + '┫\n'
             )
 
     return str_source_table
+
+
+def device_info_table_cn(timeline, device_list):
+    """ 以表格的形式输出各个处理机的统计信息：
+        - 处理机 ID
+        - 处理总时长
+        - 处理过的请求数
+        - 使用率
+
+    :param timeline: 时间线
+    :param device_list: 包含有多个处理机的列表
+    :return: 带有统计信息的字符串
+    """
+    if timeline is None or device_list is None:
+        return None
+
+    # 如果程序正确，那么 请求停留总时间 = 缓冲中等待时间 + 服务时间
+    str_device_table = (('┏' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┓\n' \
+                       + '┇' + format(ColorPrinter.get_color_string(
+                            string='Device info table',
+                            fore_color=ForeColor.BLUE,
+                            show_type=ShowType.HIGHLIGHT), ('^' + (DEVICE_TABLE_LINE_LENGTH + 11).__str__())) + '┇\n' \
+                       + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n' \
+                       + '┇' + format(ColorPrinter.get_color_string('Device ID', ShowType.HIGHLIGHT), '^25') \
+                       + '┇' + format(ColorPrinter.get_color_string('处理总时长', ShowType.HIGHLIGHT), '^28') \
+                       + '┇' + format(ColorPrinter.get_color_string('处理过的请求数', ShowType.HIGHLIGHT), '^25') \
+                       + '┇' + format(ColorPrinter.get_color_string('使用率', ShowType.HIGHLIGHT), '^25') + '┇\n' \
+                       + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n'
+                        )
+
+    for device in device_list:
+        # 处理机 ID
+        device_id = device.id
+
+        # 处理总时长
+        serve_time = device.serve_time
+
+        # 处理过的请求数
+        num_been_server_request = device.num_been_request
+
+        # 使用率
+        usage_rate = device.serve_time / timeline.get_time()
+
+        str_device_table += (
+          '┇' + format(ColorPrinter.get_color_string('П' + device_id.__str__(), ShowType.HIGHLIGHT), '^25') \
+          + '┇' + format(ColorPrinter.get_color_string(serve_time.__str__()), '^22') \
+          + '┇' + format(ColorPrinter.get_color_string(num_been_server_request.__str__()), '^22') \
+          + '┇' + format(ColorPrinter.get_color_string((round(usage_rate, 5)).__str__()), '^18') + '┇\n' \
+          + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n'
+            )
+
+
+
+    return str_device_table
