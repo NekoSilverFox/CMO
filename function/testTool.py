@@ -118,6 +118,7 @@ def create_device_list(timeline, num_device, min_duration_handle, max_duration_h
     return device_list
 
 
+
 def push_request_in_buffer_list(request, buffer_list):
     """ 向缓冲区列表 buffer_list 中选择优先级最大的 Buffer 并将请求插入，返回 True
     如果所有的缓冲区都被占用，则返回 False
@@ -193,12 +194,32 @@ def done_request_in_device_list(device_list):
     return num_done_request
 
 
+def get_request_cmo_id_list_by_source(timeline, source):
+    """ 根据源获取有个这个源产生的所有请求的ID的列表（ID为这个请求在整个CMO系统中的ID）
+
+    :param timeline: 时间线
+    :param source: 源
+    :return: 源产生的所有请求的ID的列表（ID为这个请求在整个CMO系统中的ID）
+    """
+    if timeline is None or source is None:
+        return None
+
+    source_id = source.id
+    request_cmo_id_list = []
+
+    for event in timeline.log:
+        if event.source_id == source_id and event.event_type == Event.REQUEST_CREATE:
+            request_cmo_id_list.append(event.request_id_in_cmo)
+
+    return request_cmo_id_list
+
+
 def push_request_in_device_list(request, device_list):
     """向Device列表中按照优先级插入请求
 
     :param request: 要插入的请求
     :param device_list: 存储处理机 Device 的列表
-    :return:
+    :return: 插入成功返回 True，失败返回 False
     """
     if request is None or device_list is None:
         print('\033[1;37;41m[ERROR]\033[0m Device list or request is empty!')
@@ -222,29 +243,39 @@ def get_request_wait_time_list_in_buffer_by_source(timeline, source):
     :param source: 查看由哪个源产生的请求
     :return: 请求在缓冲中等待时长的 list列表
     """
-    """"""
 
     if timeline is None or source is None:
         return None
 
-    source_id = source.id
+    # 在存储 wait_time_list 中，存储了保存有等待信息的【元组】：(request id in cmo, request id in source, wait time)
     wait_time_list = []
-    request_join_buffer_time = 0
 
-    for event in timeline.log:
-        # 如果不是当前需求的请求，直接跳过，进行下一次循环
-        if event.source_id != source_id:
-            continue
+    # 先获取这个源产生请求在CMO中ID的列表
+    request_cmo_id_list = get_request_cmo_id_list_by_source(timeline, source)
 
-        # 如果事件为该请求进入缓冲区，记录进入时间，并进行下一次循环
-        if event.event_type is Event.REQUEST_PUSH_IN_BUFFER:
-            request_join_buffer_time = event.happen_time
-            continue
+    # 分别获取他们的等待信息的【元组】：(request id in cmo, request id in source, wait time)（如果请求没被取消的话）
+    for request_cmo_id in request_cmo_id_list:
 
-        # 如果事件为该请求退出缓冲区，记录退出时间，写入 wait_time_list 集合当中，并进行下一次循环
-        if event.event_type is Event.REQUEST_POP_FROM_BUFFER:
-            wait_time_list.append(event.happen_time - request_join_buffer_time)
-            continue
+        request_join_buffer_time = 0
+
+        for event in timeline.log:
+            # 如果不是当前需求的请求，直接跳过，进行下一次循环
+            if event.request_id_in_cmo != request_cmo_id:
+                continue
+
+            # 如果该请求被取消了，就没有判断这个请求的必要了，直接进行中断当前请求的处理
+            if event.event_type is Event.REQUEST_CANCEL:
+                break
+
+            # 如果事件为该请求进入缓冲区，记录进入时间
+            if event.event_type is Event.REQUEST_PUSH_IN_BUFFER:
+                request_join_buffer_time = event.happen_time
+
+            # 如果事件为该请求退出缓冲区，记录退出时间，写入 wait_time_list 集合当中，并进行下一次外层循环
+            if event.event_type is Event.REQUEST_POP_FROM_BUFFER:
+                wait_time = event.happen_time - request_join_buffer_time
+                wait_time_list.append((event.request_id_in_cmo, event.request_id_in_source, wait_time))
+                break
 
     return wait_time_list
 
@@ -256,47 +287,116 @@ def get_request_handle_time_list_in_device_by_source(timeline, source):
     :param source: 查看由哪个源产生的请求
     :return: 请求在处理机中处理时长的 list列表
     """
-    """"""
 
     if timeline is None or source is None:
         return None
 
-    source_id = source.id
+    # 在存储 wait_time_list 中，存储了保存有等待信息的【元组】：(request id in cmo, request id in source, wait time)
     handle_time_list = []
-    request_join_device_time = 0
 
-    for event in timeline.log:
-        # 如果不是当前需求的请求，直接跳过，进行下一次循环
-        if event.source_id != source_id:
-            continue
+    # 先获取这个源产生请求在CMO中ID的列表
+    request_cmo_id_list = get_request_cmo_id_list_by_source(timeline, source)
 
-        # 如果事件为该请求进入处理机，记录进入时间，并进行下一次循环
-        if event.event_type is Event.REQUEST_PUSH_IN_DEVICE:
-            request_join_device_time = event.happen_time
-            continue
+    # 分别获取他们的等待信息的【元组】：(request id in cmo, request id in source, handle time)（如果请求没被取消的话）
+    for request_cmo_id in request_cmo_id_list:
 
-        # 如果事件为该请求退出处理机，记录退出时间，写入 handle_time_list 集合当中，并进行下一次循环
-        if event.event_type is Event.REQUEST_POP_FROM_DEVICE:
-            handle_time_list.append(event.happen_time - request_join_device_time)
-            continue
+        request_join_device_time = 0
+
+        for event in timeline.log:
+            # 如果不是当前需求的请求，直接跳过，进行下一次循环
+            if event.request_id_in_cmo != request_cmo_id:
+                continue
+
+            # 如果该请求被取消了，就没有判断这个请求的必要了，直接进行中断当前请求的处理
+            if event.event_type is Event.REQUEST_CANCEL:
+                break
+
+            # 如果事件为该请求进入缓冲区，记录进入时间
+            if event.event_type is Event.REQUEST_PUSH_IN_DEVICE:
+                request_join_device_time = event.happen_time
+
+            # 如果事件为该请求退出缓冲区，记录退出时间，写入 wait_time_list 集合当中，并进行下一次外层循环
+            if event.event_type is Event.REQUEST_POP_FROM_DEVICE:
+                handle_time = event.happen_time - request_join_device_time
+                handle_time_list.append((event.request_id_in_cmo, event.request_id_in_source, handle_time))
+                break
 
     return handle_time_list
 
 
-def get_request_result_from_log_by_source(timeline, source):
-    """根据用户提供的源来从日志中输出统计结果"""
+def get_request_live_time_list_in_device_by_source(timeline, source):
+    """ 根据源获取由这个源生成的请求在整个CMO系统中的生命时长（从源产生到源被取消或者结束处理）的 list列表，列表的每一个项代表一个请求的处理时长。被取消的请求不纳入统计当中
+
+    :param timeline: 来记录有时间的时间线
+    :param source: 查看由哪个源产生的请求
+    :return: 请求在处理机中处理时长的 list列表
+    """
 
     if timeline is None or source is None:
         return None
 
-    source_id = source.id       # 要查询源的 ID
-    num_request_created = source.num_request  # 这个源生成的请求总数
-    request_cancel_probability = 0  # 请求的取消率
-    request_live_time = 0   # 请求停留总时间（请求的生命周期）
-    request_wait_time_in_buffer = 0  # 缓冲中等待时间
-    request_in_device_time = 0    # 处理机服务这个请求的时间
-    request_wait_time_variance = 0  # 等待时间的方差
-    request_in_device_time_variance = 0  # 服务时间的方差
+    # 在存储 wait_time_list 中，存储了保存有等待信息的【元组】：(request id in cmo, request id in source, wait time)
+    live_time_list = []
+
+    # 先获取这个源产生请求在CMO中ID的列表
+    request_cmo_id_list = get_request_cmo_id_list_by_source(timeline, source)
+
+    # 分别获取他们的等待信息的【元组】：(request id in cmo, request id in source, live time)（如果请求没被取消的话）
+    for request_cmo_id in request_cmo_id_list:
+
+        request_create_time = 0
+
+        for event in timeline.log:
+            # 如果不是当前需求的请求，直接跳过，进行下一次循环
+            if event.request_id_in_cmo != request_cmo_id:
+                continue
+
+            # 如果事件为该请求被创建，记录创建时间，该请求生命周期开始
+            if event.event_type is Event.REQUEST_CREATE:
+                request_create_time = event.happen_time
+
+            # 如果该请求被取消或者完成处理，该请求生命周期结束
+            if (event.event_type is Event.REQUEST_CANCEL) or (event.event_type is Event.REQUEST_POP_FROM_DEVICE):
+                live_time = event.happen_time - request_create_time
+                live_time_list.append((event.request_id_in_cmo, event.request_id_in_source, live_time))
+                break
+
+    return live_time_list
+
+
+def get_request_cancel_list_in_device_by_source(timeline, source):
+    """ 根据源获取由这个源生成的请求被取消的 list列表
+
+    :param timeline: 来记录有时间的时间线
+    :param source: 查看由哪个源产生的请求
+    :return: 由这个源生成的请求被取消的 list列表
+    """
+
+    if timeline is None or source is None:
+        return None
+
+    # 在存储 cancel_list 中，存储了保存有等待信息的【元组】：(request id in cmo, request id in source, cancel time)
+    cancel_list = []
+
+    # 先获取这个源产生请求在CMO中ID的列表
+    request_cmo_id_list = get_request_cmo_id_list_by_source(timeline, source)
+
+    # 分别获取他们的取消信息的【元组】：(request id in cmo, request id in source, cancel time)
+    for request_cmo_id in request_cmo_id_list:
+
+        for event in timeline.log:
+            # 如果不是当前需求的请求，直接跳过，进行下一次循环
+            if event.request_id_in_cmo != request_cmo_id:
+                continue
+
+            # 如果该请求被取消，添加记录
+            if event.event_type is Event.REQUEST_CANCEL:
+                cancel_list.append((event.request_id_in_cmo, event.request_id_in_source, event.happen_time))
+                break
+
+    return cancel_list
+
+
 
 
 

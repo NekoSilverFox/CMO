@@ -91,7 +91,6 @@ class Device:
                * (self.num_been_request ** (-1 * self.duration_lambda)) \
                * self.timeline.get_time_unit()
 
-
     def push_request(self, request):
         """ 向缓处理机插入一个请求
         如果请求不为空或者处理机中现在无请求，则插入成功，返回 True；否则返回 False
