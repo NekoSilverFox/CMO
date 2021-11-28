@@ -21,6 +21,7 @@ class TimeLine:
 
     def __init__(self, time_unit=1):
         """ 时间线的初始化，采用单例模式
+
         :param time_unit: 之后增加的每单位时间，默认为 1，只允许在初始化时指定
         """
         # 1.判断是否执行过初始化动作
@@ -31,10 +32,10 @@ class TimeLine:
         # 如果没有初始化
         print("\033[33;1m[INFO]\033[0m Init time line")
 
-        # 模拟时间
-        self.__time_now = 0
-        self.__time_unit = time_unit  # __time_unit 时间的步长（每单位时间是多久）默认为 1
         TimeLine.__init_flag = True
+        self.__time_now = 0  # 模拟时间
+        self.__time_unit = time_unit  # __time_unit 时间的步长（每单位时间是多久）默认为 1
+        self.__debug_mode = False  # 调试（单步）模式，如果为 True 每次发生事件时等待用户按键
         self.log = []  # 日志，记录时间（Event）
 
     def __new__(cls, *args, **kwargs):
@@ -95,4 +96,30 @@ class TimeLine:
               + format('Num vacant buffer: %s' % Buffer.num_vacant_buffer.__str__(), "<25") \
               + format('Num vacant device: %s' % Device.num_vacant_device.__str__(), "<20")
               )
+
+        # 【拦截事件】
+        # 如果当前模式为Debug（单步）模式，等待用户按键
+        # - 如果用户按下回车，则继续运行，直至下一个时间
+        # - 如果用户按下 ESC 键，关闭 Debug 模式，程序运行至结束
+        if self.__debug_mode:
+            key = input('>>> Press Enter to continue, `q` to exit debug mode...')
+            if key == 'q' or key == 'Q':
+                self.debug_off()
+                print('[INFO] Stop debug mode, programmer continue')
+
         return True
+
+    def debug_on(self):
+        """ 启用 debug 调试（单步）模式
+
+        :return: 无
+        """
+        self.__debug_mode = True
+
+    def debug_off(self):
+        """ 停用 debug 调试（单步）模式
+
+        :return: 无
+        """
+        self.__debug_mode = True
+        self.__debug_mode = False

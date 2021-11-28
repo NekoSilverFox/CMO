@@ -20,6 +20,7 @@ if __name__ == '__main__':
     # 创建时间线
     print('*' * LINE_LENGTH)
     timeline = TimeLine()
+    timeline.debug_on()
 
     print('*' * LINE_LENGTH)
     source_list = create_source_list(timeline, 3, 30, 70)
@@ -28,12 +29,12 @@ if __name__ == '__main__':
     buffer_list = create_buffer_list(timeline, 3)
 
     print('*' * LINE_LENGTH)
-    device_list = create_device_list(timeline, 3, 60, 100, 0.4, 0.8)
+    device_list = create_device_list(timeline, 2, 60, 100, 0.4, 0.8)
 
     print('*' * LINE_LENGTH)
     print('\033[33;1m[INFO]\033[0m Start running')
 
-    num_need_request = 30
+    num_need_request = 100
 
     print('*' * LINE_LENGTH)
     while True:
@@ -81,6 +82,8 @@ if __name__ == '__main__':
 
     print(source_info_table_ru(timeline, source_list))
     print(device_info_table_ru(timeline, device_list))
+
+
 
     # 几个源中产生请求在CMO中的ID
     # print('*' * LINE_LENGTH)
