@@ -34,7 +34,12 @@ class Device:
             self.priority = priority
 
         self.max_duration_handle = max_duration_handle  # **最大的处理时间**，即第一个请求所需的时间（*$MaxTime > 0$*）
+
+        if duration_lambda < 0 or duration_lambda > 1:
+            print('[ERROR] LAMBDA should between 0 and 1')
+            exit(1)
         self.duration_lambda = duration_lambda  # LAMBDA` - 参数，越接近 1，函数递减的就越快（$0 < LAMBDA < 1$），未指定则默认为 0.5
+
         self.request_in_device = None   # 当前在处理机中的请求
         self.request_push_time = None   # 上一个/当前 请求进入处理机的时间
         self.request_done_time = None   # 当前请求处理结束的时间（未来）
@@ -86,6 +91,7 @@ class Device:
                * (self.num_been_request ** (-1 * self.duration_lambda)) \
                * self.timeline.get_time_unit()
 
+
     def push_request(self, request):
         """ 向缓处理机插入一个请求
         如果请求不为空或者处理机中现在无请求，则插入成功，返回 True；否则返回 False
@@ -114,6 +120,7 @@ class Device:
 
         # 确定当前请求的处理结束时间
         self.request_done_time = self.request_push_time + self.duration_handle_this_request()
+        # print(self.request_done_time)  # TODO
         return True
 
     def pop_request(self):
@@ -129,7 +136,7 @@ class Device:
 
         # 如果当前处理机中无请求，或者未到该弹出的时间返回 None
         if (self.request_in_device is None) \
-                or (self.timeline.get_time() < self.request_done_time):  # 可能会有1单位的时间的延迟，所以使用了小于号
+                or (self.timeline.get_time() < self.request_done_time):  # 因为存在精度的损失，可能会有1单位的时间的延迟，所以使用了小于号
             return None
 
         request = self.request_in_device

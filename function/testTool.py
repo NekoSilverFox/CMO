@@ -11,6 +11,7 @@ import random
 from model.source import Source
 from model.buffer import Buffer
 from model.device import Device
+from model.event import Event
 
 
 def create_source_list(timeline, num_source, min_interval, max_interval, is_print_info=True):
@@ -97,7 +98,11 @@ def create_device_list(timeline, num_device, min_duration_handle, max_duration_h
 
         # 使用随机数确定 `LAMBDA` - 参数，越接近 1，函数递减的就越快（$0 < LAMBDA < 1$）
         duration_lambda = random.uniform(min_duration_lambda, max_duration_lambda)
-        duration_lambda = round(duration_handle, 2)  # 第二位为精度，保留两位小数
+        duration_lambda = round(duration_lambda, 2)  # 第二位为精度，保留两位小数
+
+        if duration_lambda < 0 or duration_lambda > 1:
+            print('[ERROR] LAMBDA should between 0 and 1')  # TODO 替换为抛出异常
+            exit(1)
 
         # 创建并插入处理机（device）
         device = Device(timeline, duration_handle, duration_lambda)
@@ -189,6 +194,12 @@ def done_request_in_device_list(device_list):
 
 
 def push_request_in_device_list(request, device_list):
+    """向Device列表中按照优先级插入请求
+
+    :param request: 要插入的请求
+    :param device_list: 存储处理机 Device 的列表
+    :return:
+    """
     if request is None or device_list is None:
         print('\033[1;37;41m[ERROR]\033[0m Device list or request is empty!')
         return False
@@ -202,3 +213,92 @@ def push_request_in_device_list(request, device_list):
         if device.request_in_device is None:
             device.push_request(request)
             return True
+
+
+def get_request_wait_time_list_in_buffer_by_source(timeline, source):
+    """ 根据源获取由这个源生成的请求在缓冲中等待时长的 list列表，列表的每一个项代表一个请求的等待时长。被取消的请求不纳入统计当中
+
+    :param timeline: 来记录有时间的时间线
+    :param source: 查看由哪个源产生的请求
+    :return: 请求在缓冲中等待时长的 list列表
+    """
+    """"""
+
+    if timeline is None or source is None:
+        return None
+
+    source_id = source.id
+    wait_time_list = []
+    request_join_buffer_time = 0
+
+    for event in timeline.log:
+        # 如果不是当前需求的请求，直接跳过，进行下一次循环
+        if event.source_id != source_id:
+            continue
+
+        # 如果事件为该请求进入缓冲区，记录进入时间，并进行下一次循环
+        if event.event_type is Event.REQUEST_PUSH_IN_BUFFER:
+            request_join_buffer_time = event.happen_time
+            continue
+
+        # 如果事件为该请求退出缓冲区，记录退出时间，写入 wait_time_list 集合当中，并进行下一次循环
+        if event.event_type is Event.REQUEST_POP_FROM_BUFFER:
+            wait_time_list.append(event.happen_time - request_join_buffer_time)
+            continue
+
+    return wait_time_list
+
+
+def get_request_handle_time_list_in_device_by_source(timeline, source):
+    """ 根据源获取由这个源生成的请求在处理机中处理时长的 list列表，列表的每一个项代表一个请求的处理时长。被取消的请求不纳入统计当中
+
+    :param timeline: 来记录有时间的时间线
+    :param source: 查看由哪个源产生的请求
+    :return: 请求在处理机中处理时长的 list列表
+    """
+    """"""
+
+    if timeline is None or source is None:
+        return None
+
+    source_id = source.id
+    handle_time_list = []
+    request_join_device_time = 0
+
+    for event in timeline.log:
+        # 如果不是当前需求的请求，直接跳过，进行下一次循环
+        if event.source_id != source_id:
+            continue
+
+        # 如果事件为该请求进入处理机，记录进入时间，并进行下一次循环
+        if event.event_type is Event.REQUEST_PUSH_IN_DEVICE:
+            request_join_device_time = event.happen_time
+            continue
+
+        # 如果事件为该请求退出处理机，记录退出时间，写入 handle_time_list 集合当中，并进行下一次循环
+        if event.event_type is Event.REQUEST_POP_FROM_DEVICE:
+            handle_time_list.append(event.happen_time - request_join_device_time)
+            continue
+
+    return handle_time_list
+
+
+def get_request_result_from_log_by_source(timeline, source):
+    """根据用户提供的源来从日志中输出统计结果"""
+
+    if timeline is None or source is None:
+        return None
+
+    source_id = source.id       # 要查询源的 ID
+    num_request_created = source.num_request  # 这个源生成的请求总数
+    request_cancel_probability = 0  # 请求的取消率
+    request_live_time = 0   # 请求停留总时间（请求的生命周期）
+    request_wait_time_in_buffer = 0  # 缓冲中等待时间
+    request_in_device_time = 0    # 处理机服务这个请求的时间
+    request_wait_time_variance = 0  # 等待时间的方差
+    request_in_device_time_variance = 0  # 服务时间的方差
+
+
+
+
+

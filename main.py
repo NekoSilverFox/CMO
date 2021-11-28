@@ -78,3 +78,13 @@ if __name__ == '__main__':
                     timeline.add_event(event)
 
     print(source_info_table_cn(source_list))
+
+    # 几个源中请求在缓冲中的等待时长
+    for source in source_list:
+        wait_time_list = get_request_wait_time_list_in_buffer_by_source(timeline, source)
+        print(wait_time_list)
+
+    # 几个源中请求在处理机中的服务时长
+    for source in source_list:
+        handle_time_list = get_request_handle_time_list_in_device_by_source(timeline, source)
+        print(handle_time_list)
