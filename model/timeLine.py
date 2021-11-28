@@ -6,6 +6,9 @@
 # @Versions: v0.1
 # @Github  ：https://github.com/NekoSilverFox
 # --------------------------------------------
+from model.buffer import Buffer
+from model.device import Device
+
 
 class TimeLine:
     """时间线 - 手动控制时间的向后移动"""
@@ -87,5 +90,9 @@ class TimeLine:
             return False
 
         self.log.append(event)
-        print(event)
+        # print(event)
+        print(event.__str__() \
+              + format('Num vacant buffer: %s' % Buffer.num_vacant_buffer.__str__(), "<25") \
+              + format('Num vacant device: %s' % Device.num_vacant_device.__str__(), "<20")
+              )
         return True

@@ -56,7 +56,7 @@ if __name__ == '__main__':
         # 4. 如果缓冲和处理机都为空，并且需要生成的请求数量和生成的请求数量相等，则程序结束
         if (Device.num_vacant_device == Device.num_device) \
                 and (Buffer.num_vacant_buffer == Buffer.num_buffer) \
-                and (Request.num_request == num_need_request):
+                and (Request.num_request >= num_need_request):
             break
 
         # 3. 如果请求数量未达到就查看是否有需要产生的请求，如果有则插入缓冲
@@ -79,40 +79,40 @@ if __name__ == '__main__':
                                       request_id_in_source=request.request_id_in_source)
                         timeline.add_event(event)
 
-    print(source_info_table_cn(timeline, source_list))
-    print(device_info_table_cn(timeline, device_list))
+    print(source_info_table_ru(timeline, source_list))
+    print(device_info_table_ru(timeline, device_list))
 
     # 几个源中产生请求在CMO中的ID
-    print('*' * LINE_LENGTH)
-    print('几个源中产生请求在CMO中的ID:')
-    for source in source_list:
-        request_cmo_id_list = get_request_cmo_id_list_by_source(timeline, source)
-        print(request_cmo_id_list)
-
-    # 几个源中请求在缓冲中的等待时长
-    print('*' * LINE_LENGTH)
-    print('个源中请求在缓冲中的等待时长:')
-    for source in source_list:
-        wait_time_list = get_request_wait_time_list_in_buffer_by_source(timeline, source)
-        print(wait_time_list)
-
-    # 几个源中请求在处理机中的服务时长
-    print('*' * LINE_LENGTH)
-    print('几个源中请求在处理机中的服务时长:')
-    for source in source_list:
-        handle_time_list = get_request_handle_time_list_in_device_by_source(timeline, source)
-        print(handle_time_list)
-
-    # 几个源中请求在CMO中的生命周期
-    print('*' * LINE_LENGTH)
-    print('几个源中请求在CMO中的生命周期:')
-    for source in source_list:
-        live_time_list = get_request_live_time_list_in_device_by_source(timeline, source)
-        print(live_time_list)
-
-    # 几个源中请求在CMO中被取消的请求
-    print('*' * LINE_LENGTH)
-    print('几个源中请求在CMO中被取消的请求:')
-    for source in source_list:
-        live_time_list = get_request_cancel_list_in_device_by_source(timeline, source)
-        print(live_time_list)
+    # print('*' * LINE_LENGTH)
+    # print('几个源中产生请求在CMO中的ID:')
+    # for source in source_list:
+    #     request_cmo_id_list = get_request_cmo_id_list_by_source(timeline, source)
+    #     print(request_cmo_id_list)
+    #
+    # # 几个源中请求在缓冲中的等待时长
+    # print('*' * LINE_LENGTH)
+    # print('个源中请求在缓冲中的等待时长:')
+    # for source in source_list:
+    #     wait_time_list = get_request_wait_time_list_in_buffer_by_source(timeline, source)
+    #     print(wait_time_list)
+    #
+    # # 几个源中请求在处理机中的服务时长
+    # print('*' * LINE_LENGTH)
+    # print('几个源中请求在处理机中的服务时长:')
+    # for source in source_list:
+    #     handle_time_list = get_request_handle_time_list_in_device_by_source(timeline, source)
+    #     print(handle_time_list)
+    #
+    # # 几个源中请求在CMO中的生命周期
+    # print('*' * LINE_LENGTH)
+    # print('几个源中请求在CMO中的生命周期:')
+    # for source in source_list:
+    #     live_time_list = get_request_live_time_list_in_device_by_source(timeline, source)
+    #     print(live_time_list)
+    #
+    # # 几个源中请求在CMO中被取消的请求
+    # print('*' * LINE_LENGTH)
+    # print('几个源中请求在CMO中被取消的请求:')
+    # for source in source_list:
+    #     live_time_list = get_request_cancel_list_in_device_by_source(timeline, source)
+    #     print(live_time_list)
