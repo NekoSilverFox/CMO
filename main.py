@@ -22,7 +22,7 @@ if __name__ == '__main__':
     timeline = TimeLine()
 
     print('*' * LINE_LENGTH)
-    source_list = create_source_list(timeline, 10, 30, 70)
+    source_list = create_source_list(timeline, 3, 30, 70)
 
     print('*' * LINE_LENGTH)
     buffer_list = create_buffer_list(timeline, 3)
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     print('*' * LINE_LENGTH)
     print('\033[33;1m[INFO]\033[0m Start running')
 
-    num_need_request = 50
+    num_need_request = 30
 
     print('*' * LINE_LENGTH)
     while True:
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
         timeline.time_go()
 
-        # 如果缓冲和处理机都为空，并且需要生成的请求数量和生成的请求数量相等，则程序结束
+        # 4. 如果缓冲和处理机都为空，并且需要生成的请求数量和生成的请求数量相等，则程序结束
         if (Device.num_vacant_device == Device.num_device) \
                 and (Buffer.num_vacant_buffer == Buffer.num_buffer) \
                 and (Request.num_request == num_need_request):

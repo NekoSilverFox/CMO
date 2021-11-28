@@ -74,26 +74,34 @@ def source_info_table_cn(timeline, source_list):
             all_request_handle_time += event_handle_time[2]
 
         # 计算这个源生成请求在 Buffer 中的等待时长的【方差】
-        ave_wait_time = all_request_wait_time_in_buffer / (num_request - num_cancel_request)  # 在 Buffer 中的平均等待时长
-        for event_wait_time in live_wait_time_list:
-            variance_wait_time += ((event_wait_time[2] - ave_wait_time) ** 2)
-        variance_wait_time /= (num_request - num_cancel_request)
+        # 会有这种情况：生成的请求全部被取消！所以说要对除零做判断！
+        if num_request == num_cancel_request:
+            variance_wait_time = 0
+        else:
+            ave_wait_time = all_request_wait_time_in_buffer / (num_request - num_cancel_request)  # 在 Buffer 中的平均等待时长
+            for event_wait_time in live_wait_time_list:
+                variance_wait_time += ((event_wait_time[2] - ave_wait_time) ** 2)
+            variance_wait_time /= (num_request - num_cancel_request)
 
         # 计算这个源生成请求在 Device 中的处理时长的【方差】
-        ave_handle_time = all_request_handle_time / (num_request - num_cancel_request)  # 在 Device 中的平均等待时长
-        for event_handle_time in live_handle_time_list:
-            variance_handle_time += ((event_handle_time[2] - ave_handle_time) ** 2)
-        variance_handle_time /= (num_request - num_cancel_request)
+        # 会有这种情况：生成的请求全部被取消！所以说要对除零做判断！
+        if num_request == num_cancel_request:
+            variance_handle_time = 0
+        else:
+            ave_handle_time = all_request_handle_time / (num_request - num_cancel_request)  # 在 Device 中的平均等待时长
+            for event_handle_time in live_handle_time_list:
+                variance_handle_time += ((event_handle_time[2] - ave_handle_time) ** 2)
+            variance_handle_time /= (num_request - num_cancel_request)
 
         str_source_table += (
           '┇' + format(ColorPrinter.get_color_string('И' + source_id.__str__(), ShowType.HIGHLIGHT), '^21') \
         + '┇' + format(ColorPrinter.get_color_string(num_request.__str__()), '^17') \
         + '┇' + format(ColorPrinter.get_color_string((round((probability_cancel * 100), 5).__str__() + ' %')), '^18') \
-        + '┇' + format(ColorPrinter.get_color_string(all_request_live_time.__str__()), '^20') \
-        + '┇' + format(ColorPrinter.get_color_string(all_request_wait_time_in_buffer.__str__()), '^20') \
+        + '┇' + format(ColorPrinter.get_color_string(all_request_live_time.__str__()), '^18') \
+        + '┇' + format(ColorPrinter.get_color_string(all_request_wait_time_in_buffer.__str__()), '^18') \
         + '┇' + format(ColorPrinter.get_color_string(all_request_handle_time.__str__()), '^18') \
-        + '┇' + format(ColorPrinter.get_color_string((round(variance_wait_time, 5)).__str__()), '^20') \
-        + '┇' + format(ColorPrinter.get_color_string((round(variance_handle_time, 5)).__str__()), '^19') + '┇\n' \
+        + '┇' + format(ColorPrinter.get_color_string((round(variance_wait_time, 5)).__str__()), '^22') \
+        + '┇' + format(ColorPrinter.get_color_string((round(variance_handle_time, 5)).__str__()), '^21') + '┇\n' \
         + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n'
             )
 
