@@ -161,3 +161,1243 @@
 + $$ 处理时间 = 100 \cdot X^{-0.5} $$
 
   ![img_4.png](doc/pic/img_4.png)
+
+
+## 应用系统解决实际问题
+
+需求场景：模拟客户到达银行，在客户的离开率不超过1%的情况下，找到建设银行花费最小的方案
+
+对应到 CMO 系统中：
+
+| CMO 系统模块     | 实际问题中的模块       | 描述                                                         |
+| ---------------- | ---------------------- | ------------------------------------------------------------ |
+| 请求（Request）  | 客户                   | 到达银行的客户                                               |
+| 源（Device）     | 客户的来源             | 客户可能乘坐地铁（10分钟一班）、公交（30分钟一班）、有轨电车（20分钟一班）、无轨电车（15分钟一班）、步行（50分钟）到达银行。这些到达银行的方式可以视为**源**，源每隔固定时间间隔产生请求即为客户通过固定时间间隔到达银行 |
+| 缓冲区（Buffer） | 银行中的等待室         | 银行中的等待室，可以考虑成这是一个位置（沙发）。如果其中一个沙发被占用了，那么其他客户就不得再占用 |
+| 处理机（Device） | 银行中的柜台和工作人员 | 用于处理客户（请求），处理时间随着下班时间的临近成负指数增长 |
+
+发生的情况：
+
+| CMO 系统描述               | 实际问题                                                     |
+| -------------------------- | ------------------------------------------------------------ |
+| 请求产生                   | 客户到达银行                                                 |
+| 请求进入缓冲区             | 客户通过取号机区号，进行排队（进入等候室）                   |
+| 请求离开缓冲区，进入处理机 | 此时有空闲的柜台，客户离开等候室，进入柜台处理业务           |
+| 请求离开处理机             | 客户的业务完成，客户离开银行                                 |
+| 请求被取消                 | 银行此时处于繁忙状态，即所有的柜台都繁忙，并且等候室也没有空位 |
+
+其中：
+
+- 建设一个等候室需要花费 50000 卢布
+- 建设一个柜台及聘用相关人员需要 200000 卢布
+- 模拟银行每天需要处理 300 位客户
+- 客户的离开率不得高于1%
+
+经过建模模拟后取得结果，得到最优解：
+
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=gb2312">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 15">
+<link id=Main-File rel=Main-File href="../file9903.htm">
+<link rel=File-List href=filelist.xml>
+<![if IE]>
+<base href="file:///C:/FC98752F/file9903.files/sheet001.htm"
+id="webarch_temp_base_tag">
+<![endif]>
+<link rel=Stylesheet href=stylesheet.css>
+<style>
+<!--table
+	{mso-displayed-decimal-separator:"\.";
+	mso-displayed-thousand-separator:"\,";}
+@page
+	{margin:.75in .7in .75in .7in;
+	mso-header-margin:.3in;
+	mso-footer-margin:.3in;}
+-->
+</style>
+<![if !supportTabStrip]><script language="JavaScript">
+<!--
+function fnUpdateTabs()
+ {
+  if (parent.window.g_iIEVer>=4) {
+   if (parent.document.readyState=="complete"
+    && parent.frames['frTabs'].document.readyState=="complete")
+   parent.fnSetActiveSheet(0);
+  else
+   window.setTimeout("fnUpdateTabs();",150);
+ }
+}
+if (window.name!="frSheet")
+ window.location.replace("../file9903.htm");
+else
+ fnUpdateTabs();
+//-->
+</script>
+<![endif]>
+</head>
+
+<body link="#0563C1" vlink="#954F72" class=xl65>
+
+<table border=0 cellpadding=0 cellspacing=0 width=575 style='border-collapse:
+ collapse;table-layout:fixed;width:432pt'>
+ <col class=xl65 width=77 style='mso-width-source:userset;mso-width-alt:2816;
+ width:58pt'>
+ <col class=xl65 width=111 span=2 style='mso-width-source:userset;mso-width-alt:
+ 4059;width:83pt'>
+ <col class=xl65 width=138 span=2 style='width:104pt'>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl69 width=77 style='height:21.75pt;width:58pt'>源的数量</td>
+  <td class=xl69 width=111 style='border-left:none;width:83pt'>等候区数量</td>
+  <td class=xl69 width=111 style='border-left:none;width:83pt'>服务窗口数量</td>
+  <td class=xl69 width=138 style='border-left:none;width:104pt'>请求被取消概率</td>
+  <td class=xl69 width=138 style='border-left:none;width:104pt'>总花费</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl68 style='height:21.75pt'>5</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#F8696B;mso-pattern:black none'>0.54485</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>2500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9B75;mso-pattern:black none'>0.34437</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#69C07B;mso-pattern:black none'>3000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCB27A;mso-pattern:black none'>0.25166</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#70C27B;mso-pattern:black none'>3500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDBC7B;mso-pattern:black none'>0.21262</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#77C47C;mso-pattern:black none'>4000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9706D;mso-pattern:black none'>0.51827</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#7EC67C;mso-pattern:black none'>4500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDBE7C;mso-pattern:black none'>0.20598</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#7EC67C;mso-pattern:black none'>4500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCAD79;mso-pattern:black none'>0.27243</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85C87D;mso-pattern:black none'>5000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDBF7C;mso-pattern:black none'>0.20266</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85C87D;mso-pattern:black none'>5000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FECD7F;mso-pattern:black none'>0.14618</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#8CCA7D;mso-pattern:black none'>5500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDBF7C;mso-pattern:black none'>0.19934</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#8CCA7D;mso-pattern:black none'>5500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDC82;mso-pattern:black none'>0.08306</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#93CC7D;mso-pattern:black none'>6000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC07C;mso-pattern:black none'>0.19601</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#93CC7D;mso-pattern:black none'>6000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50831</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#9ACE7E;mso-pattern:black none'>6500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE082;mso-pattern:black none'>0.06977</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#9ACE7E;mso-pattern:black none'>6500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC17C;mso-pattern:black none'>0.19269</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#9ACE7E;mso-pattern:black none'>6500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCB279;mso-pattern:black none'>0.25249</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A1D07E;mso-pattern:black none'>7000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE082;mso-pattern:black none'>0.06645</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A1D07E;mso-pattern:black none'>7000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC27C;mso-pattern:black none'>0.18937</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A1D07E;mso-pattern:black none'>7000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FED580;mso-pattern:black none'>0.11296</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A8D27F;mso-pattern:black none'>7500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE183;mso-pattern:black none'>0.06312</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A8D27F;mso-pattern:black none'>7500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE583;mso-pattern:black none'>0.04651</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#AFD47F;mso-pattern:black none'>8000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE283;mso-pattern:black none'>0.0598</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#AFD47F;mso-pattern:black none'>8000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50498</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B6D67F;mso-pattern:black none'>8500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE984;mso-pattern:black none'>0.03322</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B6D67F;mso-pattern:black none'>8500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE383;mso-pattern:black none'>0.05648</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B6D67F;mso-pattern:black none'>8500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB57A;mso-pattern:black none'>0.24252</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#BDD780;mso-pattern:black none'>9000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE984;mso-pattern:black none'>0.0299</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#BDD780;mso-pattern:black none'>9000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE483;mso-pattern:black none'>0.05316</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#BDD780;mso-pattern:black none'>9000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FED881;mso-pattern:black none'>0.09967</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C4DA80;mso-pattern:black none'>9500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFEA84;mso-pattern:black none'>0.02658</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C4DA80;mso-pattern:black none'>9500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFEA84;mso-pattern:black none'>0.02658</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#CBDC81;mso-pattern:black none'>10000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFEB84;mso-pattern:black none'>0.02326</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#CBDC81;mso-pattern:black none'>10000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50498</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#D1DE81;mso-pattern:black none'>10500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C3D980;mso-pattern:black none'>0.01329</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#D1DE81;mso-pattern:black none'>10500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F2E783;mso-pattern:black none'>0.01993</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#D1DE81;mso-pattern:black none'>10500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl67 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl67 style='border-top:none;border-left:none;border-top:.5pt solid windowtext;
+  border-right:.5pt solid windowtext;border-bottom:none;border-left:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl67 style='border-top:none;border-left:none;border-top:.5pt solid windowtext;
+  border-right:.5pt solid windowtext;border-bottom:none;border-left:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl67 style='border-top:none;border-left:none;border-top:.5pt solid windowtext;
+  border-right:.5pt solid windowtext;border-bottom:none;border-left:.5pt solid windowtext;
+  background:#FDB57A;mso-pattern:black none'>0.2392</td>
+  <td class=xl67 style='border-top:none;border-left:none;border-top:.5pt solid windowtext;
+  border-right:.5pt solid windowtext;border-bottom:none;border-left:.5pt solid windowtext;
+  background:#D8E081;mso-pattern:black none'>11000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl72 style='height:21.75pt'>5</td>
+  <td class=xl70 style='border-left:none;font-size:11.0pt;color:black;
+  font-weight:700;text-decoration:none;text-underline-style:none;text-line-through:
+  none;font-family:Calibri, sans-serif;border-top:1.0pt dot-dash-slanted lime;
+  border-right:.5pt solid windowtext;border-bottom:1.0pt dot-dash-slanted lime;
+  border-left:.5pt solid windowtext;background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl70 style='border-left:none;font-size:11.0pt;color:black;
+  font-weight:700;text-decoration:none;text-underline-style:none;text-line-through:
+  none;font-family:Calibri, sans-serif;border-top:1.0pt dot-dash-slanted lime;
+  border-right:.5pt solid windowtext;border-bottom:1.0pt dot-dash-slanted lime;
+  border-left:.5pt solid windowtext;background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl70 style='border-left:none;font-size:11.0pt;color:black;
+  font-weight:700;text-decoration:none;text-underline-style:none;text-line-through:
+  none;font-family:Calibri, sans-serif;border-top:1.0pt dot-dash-slanted lime;
+  border-right:.5pt solid windowtext;border-bottom:1.0pt dot-dash-slanted lime;
+  border-left:.5pt solid windowtext;background:#ABD27F;mso-pattern:black none'>0.00997</td>
+  <td class=xl71 style='border-left:none;font-size:11.0pt;color:black;
+  font-weight:700;text-decoration:none;text-underline-style:none;text-line-through:
+  none;font-family:Calibri, sans-serif;border-top:1.0pt dot-dash-slanted lime;
+  border-right:1.0pt dot-dash-slanted lime;border-bottom:1.0pt dot-dash-slanted lime;
+  border-left:.5pt solid windowtext;background:#D8E081;mso-pattern:black none'>11000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl68 style='height:21.75pt'>5</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#DAE081;mso-pattern:black none'>0.01661</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#D8E081;mso-pattern:black none'>11000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl68 style='height:21.75pt'>5</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#FFDA81;mso-pattern:black none'>0.09302</td>
+  <td class=xl68 style='border-left:none;border-top:none;border-right:.5pt solid windowtext;
+  border-bottom:.5pt solid windowtext;border-left:.5pt solid windowtext;
+  background:#DFE282;mso-pattern:black none'>11500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#92CB7D;mso-pattern:black none'>0.00664</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DFE282;mso-pattern:black none'>11500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F2E783;mso-pattern:black none'>0.01993</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#E6E482;mso-pattern:black none'>12000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#7AC47C;mso-pattern:black none'>0.00332</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#E6E482;mso-pattern:black none'>12000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50498</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EDE683;mso-pattern:black none'>12500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#92CB7D;mso-pattern:black none'>0.00664</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EDE683;mso-pattern:black none'>12500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EDE683;mso-pattern:black none'>12500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB67A;mso-pattern:black none'>0.23588</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F4E883;mso-pattern:black none'>13000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#7AC47C;mso-pattern:black none'>0.00332</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F4E883;mso-pattern:black none'>13000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F4E883;mso-pattern:black none'>13000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDB81;mso-pattern:black none'>0.0897</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FBEA83;mso-pattern:black none'>13500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FBEA83;mso-pattern:black none'>13500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAE081;mso-pattern:black none'>0.01661</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE984;mso-pattern:black none'>14000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE984;mso-pattern:black none'>14000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50498</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE383;mso-pattern:black none'>14500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#7AC47C;mso-pattern:black none'>0.00332</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE383;mso-pattern:black none'>14500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFE383;mso-pattern:black none'>14500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB77A;mso-pattern:black none'>0.23256</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDD82;mso-pattern:black none'>15000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDD82;mso-pattern:black none'>15000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDD82;mso-pattern:black none'>15000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDB81;mso-pattern:black none'>0.08638</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FED781;mso-pattern:black none'>15500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FED781;mso-pattern:black none'>15500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C3D980;mso-pattern:black none'>0.01329</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FED280;mso-pattern:black none'>16000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FED280;mso-pattern:black none'>16000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50498</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FECC7E;mso-pattern:black none'>16500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FECC7E;mso-pattern:black none'>16500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FECC7E;mso-pattern:black none'>16500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB77A;mso-pattern:black none'>0.23256</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC67D;mso-pattern:black none'>17000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC67D;mso-pattern:black none'>17000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC67D;mso-pattern:black none'>17000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDC82;mso-pattern:black none'>0.08306</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC07C;mso-pattern:black none'>17500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDC07C;mso-pattern:black none'>17500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#ABD27F;mso-pattern:black none'>0.00997</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDBA7B;mso-pattern:black none'>18000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDBA7B;mso-pattern:black none'>18000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50498</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB57A;mso-pattern:black none'>18500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB57A;mso-pattern:black none'>18500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB57A;mso-pattern:black none'>18500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB77A;mso-pattern:black none'>0.23256</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCAF79;mso-pattern:black none'>19000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCAF79;mso-pattern:black none'>19000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCAF79;mso-pattern:black none'>19000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDC82;mso-pattern:black none'>0.08306</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCA978;mso-pattern:black none'>19500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCA978;mso-pattern:black none'>19500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#ABD27F;mso-pattern:black none'>0.00997</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCA377;mso-pattern:black none'>20000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCA377;mso-pattern:black none'>20000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FCFCFF;mso-pattern:black none'>1</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9736D;mso-pattern:black none'>0.50498</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9D75;mso-pattern:black none'>20500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9D75;mso-pattern:black none'>20500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9D75;mso-pattern:black none'>20500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#EBF6F1;mso-pattern:black none'>2</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FDB77A;mso-pattern:black none'>0.23256</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9874;mso-pattern:black none'>21000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9874;mso-pattern:black none'>21000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9874;mso-pattern:black none'>21000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#DAEFE2;mso-pattern:black none'>3</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FFDC82;mso-pattern:black none'>0.08306</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9273;mso-pattern:black none'>21500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FB9273;mso-pattern:black none'>21500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#C9E8D3;mso-pattern:black none'>4</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#ABD27F;mso-pattern:black none'>0.00997</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FA8C72;mso-pattern:black none'>22000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FA8C72;mso-pattern:black none'>22000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#B8E1C5;mso-pattern:black none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FA8671;mso-pattern:black none'>22500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FA8671;mso-pattern:black none'>22500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#A7DAB6;mso-pattern:black none'>6</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FA8170;mso-pattern:black none'>23000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#FA8170;mso-pattern:black none'>23000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#96D3A7;mso-pattern:black none'>7</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F97B6F;mso-pattern:black none'>23500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#85CC99;mso-pattern:black none'>8</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F9756E;mso-pattern:black none'>24000000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#74C58A;mso-pattern:black none'>9</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F96F6D;mso-pattern:black none'>24500000</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl66 style='height:21.75pt;border-top:none'>5</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>10</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#63BE7B;mso-pattern:black none'>0</td>
+  <td class=xl66 style='border-top:none;border-left:none;border:.5pt solid windowtext;
+  background:#F8696B;mso-pattern:black none'>25000000</td>
+ </tr>
+ <![if supportMisalignedColumns]>
+ <tr height=0 style='display:none'>
+  <td width=77 style='width:58pt'></td>
+  <td width=111 style='width:83pt'></td>
+  <td width=111 style='width:83pt'></td>
+  <td width=138 style='width:104pt'></td>
+  <td width=138 style='width:104pt'></td>
+ </tr>
+ <![endif]>
+</table>
+
+</body>
+
+</html>
+
