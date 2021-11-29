@@ -1,7 +1,17 @@
 <p align="center">
- <img width="100px" src="https://github.com/NekoSilverFox/NekoSilverfox/blob/master/icons/silverfox.svg" align="center" alt="ZYNQ" />
- <h1 align="center">CMO</h1>
- <p align="center"><b>时序控制系统及自动目标测试</b></p>
+ <img width="100px" src="https://github.com/NekoSilverFox/NekoSilverfox/blob/master/icons/silverfox.svg" align="center" alt="silverfox" />
+ <h1 align="center">CMO</br></h1>
+ <p align="center">
+  <b>时序控制系统及自动目标测试</b>
+ </p>
+ <h1 align="center"></h1>
+ <p align="center">
+  <img width="250px" src="https://github.com/NekoSilverFox/NekoSilverfox/blob/master/icons/new_logo_spbstu_en.svg" align="center" alt="silverfox" /></br>
+  <b><b>Санкт-Петербургский государственный политехнический университет</b></br></b>
+  <b>Институт компьютерных наук и технологий</b>
+  <h1 align="center"></h1>
+ </p>
+ <p align="center"></p>
 </p>
 
 <div align=center>
