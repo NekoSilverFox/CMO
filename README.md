@@ -65,7 +65,7 @@
 ![img.png](doc/pic/img.png)
 
 ## 模拟时序图
-![timecxema.png](doc/pic/timecxema.png)
+![timecxema.png](doc/pic/time_cxema.jpg)
 
 ## 程序框图
 
@@ -103,6 +103,16 @@
  - 请求在他的生成源的ID
  - 缓冲区ID
  - 处理机ID
+ - 系统中当前空闲缓冲区的数量
+ - 系统中当前空闲处理机的数量
+
+### 源（Source）
+ - _static_ 当前 CMO 中的源的总数
+ - 源 ID
+ - 源的优先级
+ - 下一个请求发生的时间
+ - 本源的服务时间（各请求在源的停留时间**总和**）
+ - 时间线（用户传入）
 
 ### 缓冲区（Buffer）
  - _static_ 当前 CMO 中的缓冲区总数

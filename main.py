@@ -48,18 +48,38 @@ def model_bank():
             source_list.append(Source(timeline, 50))
 
             buffer_list = create_buffer_list(timeline, tmp_num_buffer, False)
-            device_list = create_device_list(timeline, tmp_num_device, 30, 30, 0.5, 0.5, False)
+            # device_list = create_device_list(timeline, tmp_num_device, 60, 60, 0.1, 0.1, False)
+            device_list = create_device_list(timeline, tmp_num_device, 60, 90, 0.5, 0.5, False)
 
             running_model(timeline, source_list, buffer_list, device_list, 300)
+
+            # 获取总等待时长
+            all_wait_time = 0
+            for buffer in buffer_list:
+                all_wait_time += buffer.serve_time
+            # 获取总平均等待时长
+            avg_wait_time = all_wait_time / (Request.num_request - Request.num_cancel_request)
+
+            # 获取总平均服务时长
+            all_handle_time = 0
+            for device in device_list:
+                all_handle_time += device.serve_time
+            # 获取总平均服务时长
+            avg_handle_time = all_handle_time / (Request.num_request - Request.num_cancel_request)
+
             str_num_buffer = ColorPrinter.get_color_string('Num buffer: ' + tmp_num_buffer.__str__(), ForeColor.BLUE, ShowType.HIGHLIGHT)
             str_num_device = ColorPrinter.get_color_string('Num device: ' + tmp_num_device.__str__(), ForeColor.RED, ShowType.HIGHLIGHT)
+            str_avg_wait_time = '总平均等待时长: ' + round(avg_wait_time, 4).__str__()
+            str_avg_handle_time = '总平均服务时长: ' + round(avg_handle_time, 4).__str__()
             str_p_cancel = '请求取消概率: ' + round(Request.num_cancel_request / Request.num_request, 5).__str__()
-            str_money_buffer = '建等候区的花费: ' + (money_buffer * tmp_num_buffer).__str__()
-            str_money_device = '员工工资: ' + (money_device * tmp_num_device).__str__()
+            str_money_buffer = '等候区花费: ' + (money_buffer * tmp_num_buffer).__str__()
+            str_money_device = '窗口花费: ' + (money_device * tmp_num_device).__str__()
             str_all_money = '总花费: ' + ((money_buffer * tmp_num_buffer) + (money_device * tmp_num_device)).__str__()
 
             mix_str = format(str_num_buffer, '<30') \
                + format(str_num_device, '<30') \
+               + format(str_avg_wait_time, '<20') \
+               + format(str_avg_handle_time, '<20') \
                + format(str_p_cancel, '<20') \
                + format(str_money_buffer, '<20') \
                + format(str_money_device, '<20') \
