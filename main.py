@@ -49,9 +49,9 @@ def model_bank():
 
             buffer_list = create_buffer_list(timeline, tmp_num_buffer, False)
             # device_list = create_device_list(timeline, tmp_num_device, 60, 60, 0.1, 0.1, False)
-            device_list = create_device_list(timeline, tmp_num_device, 60, 90, 0.5, 0.5, False)
+            device_list = create_device_list(timeline, tmp_num_device, 45, 90, 0.2, 0.2, False)
 
-            running_model(timeline, source_list, buffer_list, device_list, 300)
+            running_model(timeline, source_list, buffer_list, device_list, 5200)
 
             # 获取总等待时长
             all_wait_time = 0
@@ -162,7 +162,8 @@ def running_model(timeline, source_list, buffer_list, device_list, num_need_requ
 if __name__ == '__main__':
     model_bank()
     exit(0)
-"""
+
+    """
     ColorPrinter.color_print('*' * LINE_LENGTH, ForeColor.PURPLE, ShowType.HIGHLIGHT)
     ColorPrinter.color_print('Выбор режима:\n', ShowType.HIGHLIGHT)
     ColorPrinter.color_print('\t1 - автоматический\n', ForeColor.GREEN, ShowType.HIGHLIGHT)
@@ -228,6 +229,10 @@ if __name__ == '__main__':
     print(device_info_table_ru(timeline, device_list))
     pass
 """
+
+
+
+
 
     # 几个源中产生请求在CMO中的ID
     # print('*' * LINE_LENGTH)
