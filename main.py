@@ -23,8 +23,11 @@ def model_bank():
     print('*' * LINE_LENGTH)
     timeline = TimeLine()
     timeline.debug_off()
-    # timeline.print_event_off()
+    timeline.print_event_off()
+    print('*' * LINE_LENGTH)
 
+    money_buffer = 500000
+    money_device = 2000000
     max_num_buffer = 10
     max_num_device = 10
     tmp_num_buffer = 0
@@ -44,13 +47,29 @@ def model_bank():
             source_list.append(Source(timeline, 15))
             source_list.append(Source(timeline, 50))
 
-            buffer_list = create_buffer_list(timeline, tmp_num_buffer)
-            device_list = create_device_list(timeline, tmp_num_device, 30, 30, 0.5, 0.5)
+            buffer_list = create_buffer_list(timeline, tmp_num_buffer, False)
+            device_list = create_device_list(timeline, tmp_num_device, 30, 30, 0.5, 0.5, False)
 
             running_model(timeline, source_list, buffer_list, device_list, 300)
-            print(source_info_table_ru(timeline, source_list))
-            print(device_info_table_ru(timeline, device_list))
-            print('#' * LINE_LENGTH)
+            str_num_buffer = ColorPrinter.get_color_string('Num buffer: ' + tmp_num_buffer.__str__(), ForeColor.BLUE, ShowType.HIGHLIGHT)
+            str_num_device = ColorPrinter.get_color_string('Num device: ' + tmp_num_device.__str__(), ForeColor.RED, ShowType.HIGHLIGHT)
+            str_p_cancel = '请求取消概率: ' + round(Request.num_cancel_request / Request.num_request, 5).__str__()
+            str_money_buffer = '建等候区的花费: ' + (money_buffer * tmp_num_buffer).__str__()
+            str_money_device = '员工工资: ' + (money_device * tmp_num_device).__str__()
+            str_all_money = '总花费: ' + ((money_buffer * tmp_num_buffer) + (money_device * tmp_num_device)).__str__()
+
+            mix_str = format(str_num_buffer, '<30') \
+               + format(str_num_device, '<30') \
+               + format(str_p_cancel, '<20') \
+               + format(str_money_buffer, '<20') \
+               + format(str_money_device, '<20') \
+               + format(str_all_money, '<20')
+            print(mix_str)
+
+            # print(device_info_table_ru(timeline, device_list))
+            # print(source_info_table_ru(timeline, source_list))
+
+            # print('#' * LINE_LENGTH)
 
             timeline.reset()
             Request.reset()
@@ -95,7 +114,7 @@ def running_model(timeline, source_list, buffer_list, device_list, num_need_requ
         if (Device.num_vacant_device == Device.num_device) \
                 and (Buffer.num_vacant_buffer == Buffer.num_buffer) \
                 and (Request.num_request >= num_need_request):
-            print(ColorPrinter.get_color_string('[INFO] Model has down', ForeColor.GREEN))
+            # print(ColorPrinter.get_color_string('[INFO] Model has down', ForeColor.GREEN, ShowType.HIGHLIGHT))
             break
 
         # 3. 如果请求数量未达到就查看是否有需要产生的请求，如果有则插入缓冲
@@ -109,6 +128,7 @@ def running_model(timeline, source_list, buffer_list, device_list, num_need_requ
 
                     # 3.2 如果未插入成功，代表缓冲和处理机都处在繁忙状态，该请求被取消。将事件写入到 timeline 的日志
                     if is_success is False:
+                        Request.num_cancel_request += 1
                         event = Event(happen_time=timeline.get_time(),
                                       event_type=Event.REQUEST_CANCEL,
                                       source_id=request.source.id,

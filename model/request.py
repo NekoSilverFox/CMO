@@ -11,6 +11,7 @@ class Request:
     """请求"""
 
     num_request = 0  # 累计生成请求的数量
+    num_cancel_request = 0
 
     def __init__(self, source, request_id):
         """初始化一个请求
@@ -39,3 +40,4 @@ class Request:
         :return: 无
         """
         Request.num_request = 0
+        Request.num_cancel_request = 0

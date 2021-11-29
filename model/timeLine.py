@@ -105,7 +105,7 @@ class TimeLine:
         if self.__print_event:
             print(event.__str__() \
                   + format('Num vacant buffer: %s' % Buffer.num_vacant_buffer.__str__(), "<25") \
-                  + format('Num vacant device: %s' % Device.num_vacant_device.__str__(), "<20")
+                  + format('Num vacant device: %s' % Device.num_vacant_device.__str__())
                   )
 
         # 【拦截事件】
