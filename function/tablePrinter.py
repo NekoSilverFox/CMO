@@ -191,7 +191,7 @@ def source_info_table_ru(timeline, source_list):
         - 该源产生的所有请求服务总时间
         - 该源产生所有请求的等待时间的方差
         - 该源产生所有请求的服务时间的方差
-    -
+
     :param timeline: 时间线
     :param source_list: 包含有多个源的列表
     :return: 带有统计信息的字符串
@@ -214,7 +214,7 @@ def source_info_table_ru(timeline, source_list):
                        + '┇' + format(ColorPrinter.get_color_string('Т обслуживания', ShowType.HIGHLIGHT), '^28') \
                        + '┇' + format(ColorPrinter.get_color_string('Д ожидания', ShowType.HIGHLIGHT), '^32') \
                        + '┇' + format(ColorPrinter.get_color_string('Д обслуживания', ShowType.HIGHLIGHT), '^31') + '┇\n' \
-                       + ('┣' + '┅' * SOURCE_TABLE_LINE_LENGTH) + '┫\n' \
+                       + ('┣' + '┅' * SOURCE_TABLE_LINE_LENGTH) + '┫\n'
 
     for source in source_list:
         # 源 ID

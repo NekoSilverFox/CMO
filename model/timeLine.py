@@ -36,6 +36,7 @@ class TimeLine:
         self.__time_now = 0  # 模拟时间
         self.__time_unit = time_unit  # __time_unit 时间的步长（每单位时间是多久）默认为 1
         self.__debug_mode = False  # 调试（单步）模式，如果为 True 每次发生事件时等待用户按键
+        self.__print_event = True  # 事件发生时是否输出
         self.log = []  # 日志，记录时间（Event）
 
     def __new__(cls, *args, **kwargs):
@@ -57,6 +58,14 @@ class TimeLine:
         :return: 说明当前时间的字符串
         """
         return "Now time is " + self.__time_now.__str__()
+
+    def reset(self):
+        """ 将时间归零，事件列表清空
+
+        :return: 无
+        """
+        self.__time_now = 0
+        self.log.clear()
 
     def get_time(self):
         """ 获取当前时间
@@ -92,10 +101,12 @@ class TimeLine:
 
         self.log.append(event)
         # print(event)
-        print(event.__str__() \
-              + format('Num vacant buffer: %s' % Buffer.num_vacant_buffer.__str__(), "<25") \
-              + format('Num vacant device: %s' % Device.num_vacant_device.__str__(), "<20")
-              )
+
+        if self.__print_event:
+            print(event.__str__() \
+                  + format('Num vacant buffer: %s' % Buffer.num_vacant_buffer.__str__(), "<25") \
+                  + format('Num vacant device: %s' % Device.num_vacant_device.__str__(), "<20")
+                  )
 
         # 【拦截事件】
         # 如果当前模式为Debug（单步）模式，等待用户按键
@@ -121,5 +132,32 @@ class TimeLine:
 
         :return: 无
         """
-        self.__debug_mode = True
         self.__debug_mode = False
+
+    def is_debug(self):
+        """ 是否开启了 debug 调试（单步）模式
+
+        :return: 开启了 debug 调试（单步）模式返回 True，否则返回 False
+        """
+        return self.__debug_mode
+
+    def print_event_on(self):
+        """当事件发生时，打印输出
+
+        :return: 无
+        """
+        self.__print_event = True
+
+    def print_event_off(self):
+        """当事件发生时，不打印输出
+
+        :return: 无
+        """
+        self.__print_event = False
+
+    def is_print_event(self):
+        """ 事件发生时，是否打印输出
+
+        :return: 如果打印输出事件返回 True，否则返回 False
+        """
+        return self.__print_event

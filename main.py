@@ -15,28 +15,64 @@ from function.testTool import *
 from assist.format import LINE_LENGTH
 from model.event import Event
 from function.tablePrinter import *
+from colorPrinter.colorPrinter import *
 
-if __name__ == '__main__':
+
+def model_bank():
     # 创建时间线
     print('*' * LINE_LENGTH)
     timeline = TimeLine()
-    timeline.debug_on()
+    timeline.debug_off()
+    # timeline.print_event_off()
 
-    print('*' * LINE_LENGTH)
-    source_list = create_source_list(timeline, 3, 30, 70)
+    max_num_buffer = 10
+    max_num_device = 10
+    tmp_num_buffer = 0
 
-    print('*' * LINE_LENGTH)
-    buffer_list = create_buffer_list(timeline, 3)
+    while tmp_num_buffer < max_num_buffer:
+        tmp_num_buffer += 1
+        tmp_num_device = 0
 
-    print('*' * LINE_LENGTH)
-    device_list = create_device_list(timeline, 2, 60, 100, 0.4, 0.8)
+        while tmp_num_device < max_num_device:
+            tmp_num_device += 1
 
-    print('*' * LINE_LENGTH)
-    print('\033[33;1m[INFO]\033[0m Start running')
+            source_list = []
+            source_list.clear()
+            source_list.append(Source(timeline, 10))
+            source_list.append(Source(timeline, 30))
+            source_list.append(Source(timeline, 20))
+            source_list.append(Source(timeline, 15))
+            source_list.append(Source(timeline, 50))
 
-    num_need_request = 100
+            buffer_list = create_buffer_list(timeline, tmp_num_buffer)
+            device_list = create_device_list(timeline, tmp_num_device, 30, 30, 0.5, 0.5)
 
-    print('*' * LINE_LENGTH)
+            running_model(timeline, source_list, buffer_list, device_list, 300)
+            print(source_info_table_ru(timeline, source_list))
+            print(device_info_table_ru(timeline, device_list))
+            print('#' * LINE_LENGTH)
+
+            timeline.reset()
+            Request.reset()
+            Source.reset()
+            Buffer.reset()
+            Device.reset()
+            source_list.clear()
+            buffer_list.clear()
+            device_list.clear()
+    pass
+
+
+def running_model(timeline, source_list, buffer_list, device_list, num_need_request):
+    """ 根据提供的时间线、源列表、缓冲区列表、处理机列表开始模拟
+
+    :param timeline: 时间线
+    :param source_list: 包含有多个源的 list列表
+    :param buffer_list: 包含有多个缓冲区的 list列表
+    :param device_list: 包含有多个处理机的 list列表
+    :param num_need_request: 需要生成请求的数量
+    :return: 无
+    """
     while True:
         # 1. 查看处理机中是否有需要处理结束的请求
         done_request_in_device_list(device_list)
@@ -53,11 +89,13 @@ if __name__ == '__main__':
             push_request_in_device_list(request, device_list)
 
         timeline.time_go()
+        # print(timeline.get_time())  # TODO
 
         # 4. 如果缓冲和处理机都为空，并且需要生成的请求数量和生成的请求数量相等，则程序结束
         if (Device.num_vacant_device == Device.num_device) \
                 and (Buffer.num_vacant_buffer == Buffer.num_buffer) \
                 and (Request.num_request >= num_need_request):
+            print(ColorPrinter.get_color_string('[INFO] Model has down', ForeColor.GREEN))
             break
 
         # 3. 如果请求数量未达到就查看是否有需要产生的请求，如果有则插入缓冲
@@ -65,11 +103,11 @@ if __name__ == '__main__':
             for source in source_list:
                 request = source.create_request()
 
-                # 产生了请求，插入缓冲
+                # 3.1 产生了请求，插入缓冲
                 if request is not None:
                     is_success = push_request_in_buffer_list(request, buffer_list)
 
-                    # 如果未插入成功，代表缓冲和处理机都处在繁忙状态，该请求被取消。将事件写入到 timeline 的日志
+                    # 3.2 如果未插入成功，代表缓冲和处理机都处在繁忙状态，该请求被取消。将事件写入到 timeline 的日志
                     if is_success is False:
                         event = Event(happen_time=timeline.get_time(),
                                       event_type=Event.REQUEST_CANCEL,
@@ -79,11 +117,77 @@ if __name__ == '__main__':
                                       request_id_in_cmo=request.request_id_in_cmo,
                                       request_id_in_source=request.request_id_in_source)
                         timeline.add_event(event)
+    pass
+
+if __name__ == '__main__':
+    model_bank()
+    exit(0)
+"""
+    ColorPrinter.color_print('*' * LINE_LENGTH, ForeColor.PURPLE, ShowType.HIGHLIGHT)
+    ColorPrinter.color_print('Выбор режима:\n', ShowType.HIGHLIGHT)
+    ColorPrinter.color_print('\t1 - автоматический\n', ForeColor.GREEN, ShowType.HIGHLIGHT)
+    ColorPrinter.color_print('\t2 - пошаговый\n', ForeColor.BLUE, ShowType.HIGHLIGHT)
+    choose_mode = int(input('>>> '))
+    if choose_mode != 1 and choose_mode != 2:
+        ColorPrinter.color_print('Please choose `1` or `2` !')
+        exit(1)
+    ColorPrinter.color_print('*' * LINE_LENGTH, ForeColor.PURPLE, ShowType.HIGHLIGHT)
+
+    source_num = int(input('Введите количество '
+                           + ColorPrinter.get_color_string('источников', ForeColor.GREEN, ShowType.HIGHLIGHT) + ': '))
+
+    buffer_num = int(input('Введите количество '
+                           + ColorPrinter.get_color_string('буферов', ForeColor.BLUE, ShowType.HIGHLIGHT) + ': '))
+
+    device_num = int(input('Введите количество '
+                           + ColorPrinter.get_color_string('приборов', ForeColor.RED, ShowType.HIGHLIGHT) + ': '))
+
+    num_need_request = int(input('Введите количество '
+                           + ColorPrinter.get_color_string('моделируемых заявок', ForeColor.PURPLE, ShowType.HIGHLIGHT) + ': '))
+
+    # 创建时间线
+    print('*' * LINE_LENGTH)
+    timeline = TimeLine()
+    if choose_mode == 1:
+        timeline.debug_off()
+    elif choose_mode == 2:
+        timeline.debug_on()
+    else:
+        pass
+
+    print('*' * LINE_LENGTH)
+    print('\033[33;1m[INFO]\033[0m CMO Start running...\n')
+    print('☩ Settings: ')
+    if timeline.is_debug():
+        print('\tDebug mode\t\t' + ColorPrinter.get_color_string('ON', ForeColor.GREEN, ShowType.HIGHLIGHT))
+    else:
+        print('\tDebug mode\t\t' + ColorPrinter.get_color_string('OFF', ForeColor.RED, ShowType.HIGHLIGHT))
+
+    if timeline.is_print_event():
+        print('\tPrint event\t\t' + ColorPrinter.get_color_string('ON', ForeColor.GREEN, ShowType.HIGHLIGHT))
+    else:
+        print('\tPrint event\t\t' + ColorPrinter.get_color_string('OFF', ForeColor.RED, ShowType.HIGHLIGHT))
+
+    print('*' * LINE_LENGTH)
+    source_list = create_source_list(timeline, source_num, 30, 70)
+
+    print('*' * LINE_LENGTH)
+    buffer_list = create_buffer_list(timeline, buffer_num)
+
+    print('*' * LINE_LENGTH)
+    device_list = create_device_list(timeline, device_num, 60, 100, 0.4, 0.8)
+
+    print('*' * LINE_LENGTH)
+    running_model(timeline=timeline,
+                  source_list=source_list,
+                  buffer_list=buffer_list,
+                  device_list=device_list,
+                  num_need_request=num_need_request)
 
     print(source_info_table_ru(timeline, source_list))
     print(device_info_table_ru(timeline, device_list))
-
-
+    pass
+"""
 
     # 几个源中产生请求在CMO中的ID
     # print('*' * LINE_LENGTH)

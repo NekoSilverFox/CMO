@@ -31,3 +31,11 @@ class Request:
         return format('\033[36;1m[Request]\033[0m Number in CMO: %s' % self.request_id_in_cmo, '<45') \
                + format('Source: %s' % self.source.id, '<20')\
                + format('Request ID in source: %s' % self.request_id_in_source, '<30')
+
+    @staticmethod
+    def reset():
+        """ 将所有 static 的属性恢复到默认值，谨慎调用！
+
+        :return: 无
+        """
+        Request.num_request = 0

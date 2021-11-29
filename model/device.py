@@ -69,6 +69,15 @@ class Device:
                + format('Number request been: %s' % self.num_been_request, '<35') \
                + format('Serve time: %s' % self.serve_time, '<25')
 
+    @staticmethod
+    def reset():
+        """ 将所有 static 的属性恢复到默认值，谨慎调用！
+
+        :return: 无
+        """
+        Device.num_device = 0
+        Device.num_vacant_device = 0
+
     def duration_handle_this_request(self):
         """ 【时间段】处理当前请求所需的时长
            处理机的处理时间应该为**负指数增长**，即**越往后的请求，处理越快**

@@ -56,6 +56,15 @@ class Buffer:
                + format('Number request been: %s' % self.num_been_request, '<35') \
                + format('Serve time: %s' % self.serve_time, '<25')
 
+    @staticmethod
+    def reset():
+        """ 将所有 static 的属性恢复到默认值，谨慎调用！
+
+        :return: 无
+        """
+        Buffer.num_buffer = 0
+        Buffer.num_vacant_buffer = 0
+
     def push_request(self, request):
         """ 向缓冲区插入一个请求
         如果请求不为空或者缓冲区中现在无请求，则插入成功，返回 True；否则返回 False
