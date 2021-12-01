@@ -48,7 +48,7 @@ def model_bank():
             source_list.append(Source(timeline, 50))
 
             buffer_list = create_buffer_list(timeline, tmp_num_buffer, False)
-            # device_list = create_device_list(timeline, tmp_num_device, 60, 60, 0.1, 0.1, False)
+            # source_list = create_device_list(timeline, tmp_num_device, 60, 60, 0.1, 0.1, False)
             device_list = create_device_list(timeline, tmp_num_device, 45, 90, 0.2, 0.2, False)
 
             running_model(timeline, source_list, buffer_list, device_list, 5200)
@@ -86,7 +86,7 @@ def model_bank():
                + format(str_all_money, '<20')
             print(mix_str)
 
-            # print(device_info_table_ru(timeline, device_list))
+            # print(device_info_table_ru(timeline, source_list))
             # print(source_info_table_ru(timeline, source_list))
 
             # print('#' * LINE_LENGTH)
@@ -112,6 +112,10 @@ def running_model(timeline, source_list, buffer_list, device_list, num_need_requ
     :param num_need_request: 需要生成请求的数量
     :return: 无
     """
+    timeline.buffer_list = buffer_list
+    timeline.device_list = device_list
+    timeline.source_list = source_list
+
     while True:
         # 1. 查看处理机中是否有需要处理结束的请求
         done_request_in_device_list(device_list)
@@ -217,13 +221,22 @@ def debug_test_mode():
         print('\tPrint event\t\t' + ColorPrinter.get_color_string('OFF', ForeColor.RED, ShowType.HIGHLIGHT))
 
     print('*' * LINE_LENGTH)
-    source_list = create_source_list(timeline, source_num, 30, 70)
+    source_list = create_source_list(timeline=timeline,
+                                     num_source=source_num,
+                                     min_interval=30,
+                                     max_interval=70)
 
     print('*' * LINE_LENGTH)
-    buffer_list = create_buffer_list(timeline, buffer_num)
+    buffer_list = create_buffer_list(timeline=timeline,
+                                     num_buffer=buffer_num)
 
     print('*' * LINE_LENGTH)
-    device_list = create_device_list(timeline, device_num, 60, 100, 0.4, 0.8)
+    device_list = create_device_list(timeline=timeline,
+                                     num_device=device_num,
+                                     min_duration_handle=60,
+                                     max_duration_handle=100,
+                                     min_duration_lambda=0.4,
+                                     max_duration_lambda=0.8)
 
     print('*' * LINE_LENGTH)
     running_model(timeline=timeline,

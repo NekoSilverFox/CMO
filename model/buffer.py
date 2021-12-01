@@ -76,6 +76,11 @@ class Buffer:
         if request is None or self.request_in_buffer is not None:
             return False
 
+        Buffer.num_vacant_buffer -= 1
+        self.request_in_buffer = request
+        self.request_push_time = self.timeline.get_time()
+        self.num_been_request += 1
+
         # 将请求插入的动作写入日志
         event = Event(happen_time=self.timeline.get_time(),
                       event_type=Event.REQUEST_PUSH_IN_BUFFER,
@@ -86,10 +91,6 @@ class Buffer:
                       device_id=None)
         self.timeline.add_event(event)
 
-        Buffer.num_vacant_buffer -= 1
-        self.request_in_buffer = request
-        self.request_push_time = self.timeline.get_time()
-        self.num_been_request += 1
         return True
 
     def pop_request(self):

@@ -8,6 +8,7 @@
 # --------------------------------------------
 from model.buffer import Buffer
 from model.device import Device
+from function.tablePrinter import print_buffer_table, print_device_table, source_info_table_ru, print_source_table
 
 
 class TimeLine:
@@ -38,6 +39,9 @@ class TimeLine:
         self.__debug_mode = False  # 调试（单步）模式，如果为 True 每次发生事件时等待用户按键
         self.__print_event = True  # 事件发生时是否输出
         self.log = []  # 日志，记录时间（Event）
+        self.buffer_list = None  # TODO
+        self.device_list = None  # TODO
+        self.source_list = None  # TODO
 
     def __new__(cls, *args, **kwargs):
         # 1. 判断类属性是否为空对象
@@ -113,10 +117,16 @@ class TimeLine:
         # - 如果用户按下回车，则继续运行，直至下一个时间
         # - 如果用户按下 ESC 键，关闭 Debug 模式，程序运行至结束
         if self.__debug_mode:
+            print(print_source_table(self, self.source_list))
+            print(print_buffer_table(self.buffer_list))
+            print(print_device_table(self.device_list))
+            print(source_info_table_ru(self, self.source_list))
             key = input('>>> Press Enter to continue, `q` to exit debug mode...')
             if key == 'q' or key == 'Q':
                 self.debug_off()
                 print('[INFO] Stop debug mode, programmer continue')
+            else:
+                pass
 
         return True
 

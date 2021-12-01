@@ -227,7 +227,11 @@ def source_info_table_ru(timeline, source_list):
         num_cancel_request = len(get_request_cancel_list_in_device_by_source(timeline, source))
 
         # 这个源生成请求被取消的概率
-        probability_cancel = num_cancel_request / num_request
+        probability_cancel = None
+        if num_request == 0:
+            probability_cancel = 0
+        else:
+            probability_cancel = num_cancel_request / num_request
 
         # 这个源生成请求的声明周期总和
         all_request_live_time = 0
@@ -342,5 +346,89 @@ def device_info_table_ru(timeline, device_list):
           + '┇' + format(ColorPrinter.get_color_string((round(usage_rate, 5)).__str__()), '^18') + '┇\n' \
           + ('┣' + '┅' * DEVICE_TABLE_LINE_LENGTH) + '┫\n'
             )
+
+    return str_device_table
+
+
+def print_buffer_table(buffer_list):
+    str_device_table = (('┏' + '┅' * 50) + '┓\n' \
+                       + '┇' + format(ColorPrinter.get_color_string(
+                            string='Buffer info table',
+                            fore_color=ForeColor.BLUE,
+                            show_type=ShowType.HIGHLIGHT), ('^' + (50 + 11).__str__())) + '┇\n' \
+                       + ('┣' + '┅' * 50) + '┫\n' \
+                       + '┇' + format(ColorPrinter.get_color_string('Буфер No.?', ShowType.HIGHLIGHT), '^30') \
+                       + '┇' + format(ColorPrinter.get_color_string('Type', ShowType.HIGHLIGHT), '^39')+ '┇\n' \
+                       + ('┣' + '┅' * 50) + '┫\n'
+                        )
+
+    for buffer in buffer_list:
+        if buffer.request_in_buffer is None:
+            str_now = 'Empty'
+        else:
+            str_now = buffer.request_in_buffer.source.id.__str__() + '-'\
+                      + buffer.request_in_buffer.request_id_in_source.__str__()
+
+        str_device_table += '┇' + format(ColorPrinter.get_color_string
+                                         ('Б' + buffer.id.__str__()), '^20') + '┇' \
+                                + format(ColorPrinter.get_color_string(str_now), '^29') + '┇\n' \
+
+    str_device_table += ('┣' + '┅' * 50) + '┫'
+
+    return str_device_table
+
+
+def print_device_table(device_list):
+    str_device_table = (('┏' + '┅' * 50) + '┓\n' \
+                       + '┇' + format(ColorPrinter.get_color_string(
+                            string='Device info table',
+                            fore_color=ForeColor.RED,
+                            show_type=ShowType.HIGHLIGHT), ('^' + (50 + 11).__str__())) + '┇\n' \
+                       + ('┣' + '┅' * 50) + '┫\n' \
+                       + '┇' + format(ColorPrinter.get_color_string('Прибор No.?', ShowType.HIGHLIGHT), '^30') \
+                       + '┇' + format(ColorPrinter.get_color_string('Type', ShowType.HIGHLIGHT), '^39')+ '┇\n' \
+                       + ('┣' + '┅' * 50) + '┫\n'
+                        )
+
+    for device in device_list:
+        if device.request_in_device is None:
+            str_now = 'Empty'
+        else:
+            str_now = device.request_in_device.source.id.__str__() + '-'\
+                      + device.request_in_device.request_id_in_source.__str__()
+
+        str_device_table += '┇' + format(ColorPrinter.get_color_string
+                                         ('П' + device.id.__str__()), '^20') + '┇' \
+                                + format(ColorPrinter.get_color_string(str_now), '^29') + '┇\n' \
+
+    str_device_table += ('┣' + '┅' * 50) + '┫'
+
+    return str_device_table
+
+
+def print_source_table(timeline, source_list):
+    str_device_table = (('┏' + '┅' * 70) + '┓\n' \
+                       + '┇' + format(ColorPrinter.get_color_string(
+                            string='Source info table',
+                            fore_color=ForeColor.RED,
+                            show_type=ShowType.HIGHLIGHT), ('^' + (81).__str__())) + '┇\n' \
+                       + ('┣' + '┅' * 70) + '┫\n' \
+                       + '┇' + format(ColorPrinter.get_color_string('Источник No.?', ShowType.HIGHLIGHT), '^30') + '┇' \
+                        + format((ColorPrinter.get_color_string('Num created')), '^15') + '┇' \
+                        + format((ColorPrinter.get_color_string('Num cancel')), '^15') + '┇' \
+                        + format((ColorPrinter.get_color_string('Next time')), '^16') + '┇\n'\
+                        + ('┣' + '┅' * 70) + '┫\n'
+                        )
+
+    for source in source_list:
+        num_cancel_request = len(get_request_cancel_list_in_device_by_source(timeline, source))
+
+        str_device_table += '┇' + format('И' + source.id.__str__(), '^20') + '┇' \
+                                + format(source.num_request.__str__(), '^15') + '┇' \
+                                + format(num_cancel_request.__str__(), '^15') + '┇' \
+                                + format(source.time_create_next_request.__str__(), '^16') + '┇\n' \
+
+
+    str_device_table += ('┣' + '┅' * 70) + '┫'
 
     return str_device_table

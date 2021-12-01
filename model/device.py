@@ -111,6 +111,15 @@ class Device:
         if request is None or self.request_in_device is not None:
             return False
 
+        Device.num_vacant_device -= 1
+        self.num_been_request += 1
+        self.request_in_device = request
+        self.request_push_time = self.timeline.get_time()
+
+        # 确定当前请求的处理结束时间
+        self.request_done_time = self.request_push_time + self.duration_handle_this_request()
+        # print(self.request_done_time)  # TODO
+
         # 将请求插入的动作写入日志
         event = Event(happen_time=self.timeline.get_time(),
                       event_type=Event.REQUEST_PUSH_IN_DEVICE,
@@ -121,14 +130,6 @@ class Device:
                       device_id=self.id)
         self.timeline.add_event(event)
 
-        Device.num_vacant_device -= 1
-        self.num_been_request += 1
-        self.request_in_device = request
-        self.request_push_time = self.timeline.get_time()
-
-        # 确定当前请求的处理结束时间
-        self.request_done_time = self.request_push_time + self.duration_handle_this_request()
-        # print(self.request_done_time)  # TODO
         return True
 
     def pop_request(self):
