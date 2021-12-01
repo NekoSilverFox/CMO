@@ -159,10 +159,17 @@ def running_model(timeline, source_list, buffer_list, device_list, num_need_requ
                         timeline.add_event(event)
     pass
 
-if __name__ == '__main__':
-    model_bank()
-    exit(0)
 
+def debug_test_mode():
+    """Debug 调试模式
+    用户可以自行输入：
+        - 需要的请求（Request）数量
+        - 需要的源数量（Source）数量
+        - 需要的缓冲区（Buffer）数量
+        - 需要的处理机（Device）数量
+
+    具有单步模式和自动测试模式
+    :return: 无
     """
     ColorPrinter.color_print('*' * LINE_LENGTH, ForeColor.PURPLE, ShowType.HIGHLIGHT)
     ColorPrinter.color_print('Выбор режима:\n', ShowType.HIGHLIGHT)
@@ -228,11 +235,13 @@ if __name__ == '__main__':
     print(source_info_table_ru(timeline, source_list))
     print(device_info_table_ru(timeline, device_list))
     pass
-"""
 
 
+if __name__ == '__main__':
+    # model_bank()
+    # exit(0)
 
-
+    debug_test_mode()
 
     # 几个源中产生请求在CMO中的ID
     # print('*' * LINE_LENGTH)
