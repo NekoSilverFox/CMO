@@ -14,6 +14,51 @@ SOURCE_TABLE_LINE_LENGTH = 150
 DEVICE_TABLE_LINE_LENGTH = 80
 
 
+STR_EMPTY = 'Пустой'
+
+
+HEADER_STR_SOURCE = ColorPrinter.get_color_string(
+                         string='Информация об источников',
+                         fore_color=ForeColor.GREEN,
+                         show_type=ShowType.HIGHLIGHT)
+HEADER_STR_SOURCE_NO = ColorPrinter.get_color_string(
+                        string='Номер источника',
+                        show_type=ShowType.HIGHLIGHT)
+HEADER_STR_NUM_REQUEST_CREATED_BY_SOURCE = ColorPrinter.get_color_string(
+                        string=' Кол-во сгенер-ых заявок',
+                        show_type=ShowType.HIGHLIGHT)
+HEADER_STR_NUM_REQUEST_CANCEL_BY_SOURCE = ColorPrinter.get_color_string(
+                        string=' Кол-во отмененных заявок',
+                        show_type=ShowType.HIGHLIGHT)
+HEADER_STR_NEXT_REQUEST_CREATE_TIME_BY_SOURCE = ColorPrinter.get_color_string(
+                        string=' Время генерации следующую заявка',
+                        show_type=ShowType.HIGHLIGHT)
+
+
+HEADER_STR_BUFFER = ColorPrinter.get_color_string(
+                         string='Информация о буферов',
+                         fore_color=ForeColor.BLUE,
+                         show_type=ShowType.HIGHLIGHT)
+HEADER_STR_BUFFER_NO = ColorPrinter.get_color_string(
+                        string='Номер буфера',
+                        show_type=ShowType.HIGHLIGHT)
+HEADER_STR_REQUEST_NOW_IN_BUFFER = ColorPrinter.get_color_string(
+                        string='Заявка в буфере',
+                        show_type=ShowType.HIGHLIGHT)
+
+
+HEADER_STR_DEVICE = ColorPrinter.get_color_string(
+                         string='Информация о приборов',
+                         fore_color=ForeColor.RED,
+                         show_type=ShowType.HIGHLIGHT)
+HEADER_STR_DEVICE_NO = ColorPrinter.get_color_string(
+                        string='Номер прибора',
+                        show_type=ShowType.HIGHLIGHT)
+HEADER_STR_REQUEST_NOW_IN_DEVICE = ColorPrinter.get_color_string(
+                        string='Заявка в приборе',
+                        show_type=ShowType.HIGHLIGHT)
+
+
 def source_info_table_cn(timeline, source_list):
     """ 请在请求全部处理完成后调用！
         以表格的形式输出各个源生成请求的统计信息：
@@ -350,21 +395,53 @@ def device_info_table_ru(timeline, device_list):
     return str_device_table
 
 
-def print_buffer_table(buffer_list):
-    str_device_table = (('┏' + '┅' * 50) + '┓\n' \
-                       + '┇' + format(ColorPrinter.get_color_string(
-                            string='Buffer info table',
-                            fore_color=ForeColor.BLUE,
-                            show_type=ShowType.HIGHLIGHT), ('^' + (50 + 11).__str__())) + '┇\n' \
-                       + ('┣' + '┅' * 50) + '┫\n' \
-                       + '┇' + format(ColorPrinter.get_color_string('Буфер No.?', ShowType.HIGHLIGHT), '^30') \
-                       + '┇' + format(ColorPrinter.get_color_string('Type', ShowType.HIGHLIGHT), '^39')+ '┇\n' \
-                       + ('┣' + '┅' * 50) + '┫\n'
-                        )
+def get_source_stage_string_table_from_list(timeline, source_list):
+    """从list列表中获取源（Source）当前状态的表格形式的字符串
+
+    :param timeline: 时间线
+    :param source_list: 包含多个源（Source）的列表
+    :return: 表格形式的源（Source）当前状态的字符串
+    """
+    str_device_table = \
+        (('┏' + '┅' * 119) + '┓\n'
+         + '┇' + format(HEADER_STR_SOURCE, ('^' + (130).__str__())) + '┇\n'
+         + ('┣' + '┅' * 119) + '┫\n'
+         + '┇' + format(HEADER_STR_SOURCE_NO, '^28') + '┇'
+         + format(HEADER_STR_NUM_REQUEST_CREATED_BY_SOURCE, '^38') + '┇'
+         + format(HEADER_STR_NUM_REQUEST_CANCEL_BY_SOURCE, '^39') + '┇'
+         + format(HEADER_STR_NEXT_REQUEST_CREATE_TIME_BY_SOURCE, '^43') + '┇\n'
+         + ('┣' + '┅' * 119) + '┫\n')
+
+    for source in source_list:
+        num_cancel_request = len(get_request_cancel_list_in_device_by_source(timeline, source))
+
+        str_device_table += '┇' + format('И' + source.id.__str__(), '^20') + '┇' \
+                                + format(source.num_request.__str__(), '^30') + '┇' \
+                                + format(num_cancel_request.__str__(), '^31') + '┇' \
+                                + format(source.time_create_next_request.__str__(), '^35') + '┇\n' \
+
+    str_device_table += ('┣' + '┅' * 119) + '┫'
+
+    return str_device_table
+
+
+def get_buffer_stage_string_table_from_list(buffer_list):
+    """从list列表中获取缓冲区当前状态的表格形式的字符串
+
+    :param buffer_list:包含多个缓冲（Buffer）的列表
+    :return:表格形式的缓冲（Buffer）当前状态的字符串
+    """
+    str_device_table = \
+        (('┏' + '┅' * 50) + '┓\n'
+         + '┇' + format(HEADER_STR_BUFFER, ('^' + (50 + 11).__str__())) + '┇\n'
+         + ('┣' + '┅' * 50) + '┫\n'
+         + '┇' + format(HEADER_STR_BUFFER_NO, '^28')
+         + '┇' + format(HEADER_STR_REQUEST_NOW_IN_BUFFER, '^37') + '┇\n'
+         + ('┣' + '┅' * 50) + '┫\n')
 
     for buffer in buffer_list:
         if buffer.request_in_buffer is None:
-            str_now = 'Empty'
+            str_now = STR_EMPTY
         else:
             str_now = buffer.request_in_buffer.source.id.__str__() + '-'\
                       + buffer.request_in_buffer.request_id_in_source.__str__()
@@ -378,21 +455,23 @@ def print_buffer_table(buffer_list):
     return str_device_table
 
 
-def print_device_table(device_list):
-    str_device_table = (('┏' + '┅' * 50) + '┓\n' \
-                       + '┇' + format(ColorPrinter.get_color_string(
-                            string='Device info table',
-                            fore_color=ForeColor.RED,
-                            show_type=ShowType.HIGHLIGHT), ('^' + (50 + 11).__str__())) + '┇\n' \
-                       + ('┣' + '┅' * 50) + '┫\n' \
-                       + '┇' + format(ColorPrinter.get_color_string('Прибор No.?', ShowType.HIGHLIGHT), '^30') \
-                       + '┇' + format(ColorPrinter.get_color_string('Type', ShowType.HIGHLIGHT), '^39')+ '┇\n' \
-                       + ('┣' + '┅' * 50) + '┫\n'
-                        )
+def get_device_stage_string_table_from_list(device_list):
+    """ 从list列表中获取处理机当前状态的表格形式的字符串
+
+    :param device_list: 包含多个处理机（Device）的列表
+    :return:表格形式的处理机当前状态的字符串
+    """
+    str_device_table = \
+        (('┏' + '┅' * 50) + '┓\n'
+         + '┇' + format(HEADER_STR_DEVICE, ('^' + (50 + 11).__str__())) + '┇\n'
+         + ('┣' + '┅' * 50) + '┫\n'
+         + '┇' + format(HEADER_STR_DEVICE_NO, '^28')
+         + '┇' + format(HEADER_STR_REQUEST_NOW_IN_DEVICE, '^37') + '┇\n'
+         + ('┣' + '┅' * 50) + '┫\n')
 
     for device in device_list:
         if device.request_in_device is None:
-            str_now = 'Empty'
+            str_now = STR_EMPTY
         else:
             str_now = device.request_in_device.source.id.__str__() + '-'\
                       + device.request_in_device.request_id_in_source.__str__()
@@ -402,33 +481,5 @@ def print_device_table(device_list):
                                 + format(ColorPrinter.get_color_string(str_now), '^29') + '┇\n' \
 
     str_device_table += ('┣' + '┅' * 50) + '┫'
-
-    return str_device_table
-
-
-def print_source_table(timeline, source_list):
-    str_device_table = (('┏' + '┅' * 70) + '┓\n' \
-                       + '┇' + format(ColorPrinter.get_color_string(
-                            string='Source info table',
-                            fore_color=ForeColor.RED,
-                            show_type=ShowType.HIGHLIGHT), ('^' + (81).__str__())) + '┇\n' \
-                       + ('┣' + '┅' * 70) + '┫\n' \
-                       + '┇' + format(ColorPrinter.get_color_string('Источник No.?', ShowType.HIGHLIGHT), '^30') + '┇' \
-                        + format((ColorPrinter.get_color_string('Num created')), '^15') + '┇' \
-                        + format((ColorPrinter.get_color_string('Num cancel')), '^15') + '┇' \
-                        + format((ColorPrinter.get_color_string('Next time')), '^16') + '┇\n'\
-                        + ('┣' + '┅' * 70) + '┫\n'
-                        )
-
-    for source in source_list:
-        num_cancel_request = len(get_request_cancel_list_in_device_by_source(timeline, source))
-
-        str_device_table += '┇' + format('И' + source.id.__str__(), '^20') + '┇' \
-                                + format(source.num_request.__str__(), '^15') + '┇' \
-                                + format(num_cancel_request.__str__(), '^15') + '┇' \
-                                + format(source.time_create_next_request.__str__(), '^16') + '┇\n' \
-
-
-    str_device_table += ('┣' + '┅' * 70) + '┫'
 
     return str_device_table

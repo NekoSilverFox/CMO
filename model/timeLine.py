@@ -8,7 +8,7 @@
 # --------------------------------------------
 from model.buffer import Buffer
 from model.device import Device
-from function.tablePrinter import print_buffer_table, print_device_table, source_info_table_ru, print_source_table
+from function.tablePrinter import get_buffer_stage_string_table_from_list, get_device_stage_string_table_from_list, source_info_table_ru, get_source_stage_string_table_from_list
 
 
 class TimeLine:
@@ -117,9 +117,9 @@ class TimeLine:
         # - 如果用户按下回车，则继续运行，直至下一个时间
         # - 如果用户按下 ESC 键，关闭 Debug 模式，程序运行至结束
         if self.__debug_mode:
-            print(print_source_table(self, self.source_list))
-            print(print_buffer_table(self.buffer_list))
-            print(print_device_table(self.device_list))
+            print(get_source_stage_string_table_from_list(self, self.source_list))
+            print(get_buffer_stage_string_table_from_list(self.buffer_list))
+            print(get_device_stage_string_table_from_list(self.device_list))
             print(source_info_table_ru(self, self.source_list))
             key = input('>>> Press Enter to continue, `q` to exit debug mode...')
             if key == 'q' or key == 'Q':
