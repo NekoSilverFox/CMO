@@ -8,7 +8,11 @@
 # --------------------------------------------
 from model.buffer import Buffer
 from model.device import Device
-from function.tablePrinter import get_buffer_stage_string_table_from_list, get_device_stage_string_table_from_list, source_info_table_ru, get_source_stage_string_table_from_list
+from function.tablePrinter import \
+    get_buffer_stage_string_table_from_list, \
+    get_device_stage_string_table_from_list, \
+    source_info_table_ru, \
+    get_source_stage_string_table_from_list
 
 
 class TimeLine:
@@ -107,6 +111,9 @@ class TimeLine:
         # print(event)
 
         if self.__print_event:
+            if self.__debug_mode:
+                print('\n' + '/' * 250)
+
             print(event.__str__() \
                   + format('Num vacant buffer: %s' % Buffer.num_vacant_buffer.__str__(), "<25") \
                   + format('Num vacant device: %s' % Device.num_vacant_device.__str__())
