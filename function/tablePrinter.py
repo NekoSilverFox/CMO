@@ -31,7 +31,7 @@ HEADER_STR_NUM_REQUEST_CANCEL_BY_SOURCE = ColorPrinter.get_color_string(
                         string=' Кол-во отмененных заявок',
                         show_type=ShowType.HIGHLIGHT)
 HEADER_STR_NEXT_REQUEST_CREATE_TIME_BY_SOURCE = ColorPrinter.get_color_string(
-                        string=' Время генерации следующую заявка',
+                        string=' Время генерации следующую заявку',
                         show_type=ShowType.HIGHLIGHT)
 
 
@@ -52,12 +52,14 @@ HEADER_STR_DEVICE = ColorPrinter.get_color_string(
                          fore_color=ForeColor.RED,
                          show_type=ShowType.HIGHLIGHT)
 HEADER_STR_DEVICE_NO = ColorPrinter.get_color_string(
-                        string='Номер прибора',
+                        string=' Номер прибора',
                         show_type=ShowType.HIGHLIGHT)
 HEADER_STR_REQUEST_NOW_IN_DEVICE = ColorPrinter.get_color_string(
-                        string='Заявка в приборе',
+                        string=' Заявка в приборе',
                         show_type=ShowType.HIGHLIGHT)
-
+HEADER_STR_REQUEST_DONE_TIME_IN_DEVICE = ColorPrinter.get_color_string(
+                        string=' Время освобождения прибора',
+                        show_type=ShowType.HIGHLIGHT)
 
 def source_info_table_cn(timeline, source_list):
     """ 请在请求全部处理完成后调用！
@@ -462,24 +464,27 @@ def get_device_stage_string_table_from_list(device_list):
     :return:表格形式的处理机当前状态的字符串
     """
     str_device_table = \
-        (('┏' + '┅' * 50) + '┓\n'
-         + '┇' + format(HEADER_STR_DEVICE, ('^' + (50 + 11).__str__())) + '┇\n'
-         + ('┣' + '┅' * 50) + '┫\n'
+        (('┏' + '┅' * 80) + '┓\n'
+         + '┇' + format(HEADER_STR_DEVICE, ('^' + (80 + 11).__str__())) + '┇\n'
+         + ('┣' + '┅' * 80) + '┫\n'
          + '┇' + format(HEADER_STR_DEVICE_NO, '^28')
-         + '┇' + format(HEADER_STR_REQUEST_NOW_IN_DEVICE, '^37') + '┇\n'
-         + ('┣' + '┅' * 50) + '┫\n')
+         + '┇' + format(HEADER_STR_REQUEST_NOW_IN_DEVICE, '^37')
+         + '┇' + format(HEADER_STR_REQUEST_DONE_TIME_IN_DEVICE, '^37') + '┇\n'
+         + ('┣' + '┅' * 80) + '┫\n')
 
     for device in device_list:
         if device.request_in_device is None:
-            str_now = STR_EMPTY
+            str_request_now_in_device = STR_EMPTY
+            request_done_time = None
         else:
-            str_now = device.request_in_device.source.id.__str__() + '-'\
+            str_request_now_in_device = device.request_in_device.source.id.__str__() + '-'\
                       + device.request_in_device.request_id_in_source.__str__()
+            request_done_time = device.request_done_time
 
-        str_device_table += '┇' + format(ColorPrinter.get_color_string
-                                         ('П' + device.id.__str__()), '^20') + '┇' \
-                                + format(ColorPrinter.get_color_string(str_now), '^29') + '┇\n' \
+        str_device_table += '┇' + format('П' + device.id.__str__(), '^20') + '┇' \
+                                + format(str_request_now_in_device, '^29') + '┇' \
+                                + format(request_done_time.__str__(), '^29') + '┇\n' \
 
-    str_device_table += ('┣' + '┅' * 50) + '┫'
+    str_device_table += ('┣' + '┅' * 80) + '┫'
 
     return str_device_table

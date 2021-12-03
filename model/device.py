@@ -117,7 +117,7 @@ class Device:
         self.request_push_time = self.timeline.get_time()
 
         # 确定当前请求的处理结束时间
-        self.request_done_time = self.request_push_time + self.duration_handle_this_request()
+        self.request_done_time = int(self.request_push_time + self.duration_handle_this_request())  # 在时间线的单位时间为int时，如果这里不转为int会导致时间到了也无法弹出这个请求
         # print(self.request_done_time)  # TODO
 
         # 将请求插入的动作写入日志
@@ -149,6 +149,9 @@ class Device:
             return None
 
         request = self.request_in_device
+        Device.num_vacant_device += 1
+        self.serve_time += (self.timeline.get_time() - self.request_push_time)
+        self.request_in_device = None
 
         # 将请求插入的动作写入日志
         event = Event(happen_time=self.timeline.get_time(),
@@ -159,8 +162,4 @@ class Device:
                       buffer_id=None,
                       device_id=self.id)
         self.timeline.add_event(event)
-
-        Device.num_vacant_device += 1
-        self.serve_time += (self.timeline.get_time() - self.request_push_time)
-        self.request_in_device = None
         return request

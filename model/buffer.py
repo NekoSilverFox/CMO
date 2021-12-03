@@ -104,6 +104,14 @@ class Buffer:
 
         request = self.request_in_buffer
 
+        Buffer.num_vacant_buffer += 1
+
+        # 如果缓冲区中有请求，先将服务时间进行累加
+        self.serve_time += (self.timeline.get_time() - self.request_push_time)
+
+        # 再将当前缓冲区置空，并返回缓冲区中的请求
+        self.request_in_buffer = None
+
         # 将请求插入的动作写入日志
         event = Event(happen_time=self.timeline.get_time(),
                       event_type=Event.REQUEST_POP_FROM_BUFFER,
@@ -113,12 +121,4 @@ class Buffer:
                       buffer_id=self.id,
                       device_id=None)
         self.timeline.add_event(event)
-
-        Buffer.num_vacant_buffer += 1
-
-        # 如果缓冲区中有请求，先将服务时间进行累加
-        self.serve_time += (self.timeline.get_time() - self.request_push_time)
-
-        # 再将当前缓冲区置空，并返回缓冲区中的请求
-        self.request_in_buffer = None
         return request

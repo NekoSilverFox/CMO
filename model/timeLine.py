@@ -24,7 +24,7 @@ class TimeLine:
     # 是否执行过初始化动作
     __init_flag = False
 
-    def __init__(self, time_unit=1):
+    def __init__(self, time_unit=1, source_list=None, buffer_list=None, device_list=None):
         """ 时间线的初始化，采用单例模式
 
         :param time_unit: 之后增加的每单位时间，默认为 1，只允许在初始化时指定
@@ -43,9 +43,9 @@ class TimeLine:
         self.__debug_mode = False  # 调试（单步）模式，如果为 True 每次发生事件时等待用户按键
         self.__print_event = True  # 事件发生时是否输出
         self.log = []  # 日志，记录时间（Event）
-        self.buffer_list = None  # TODO
-        self.device_list = None  # TODO
-        self.source_list = None  # TODO
+        self.source_list = source_list
+        self.buffer_list = buffer_list
+        self.device_list = device_list
 
     def __new__(cls, *args, **kwargs):
         # 1. 判断类属性是否为空对象
